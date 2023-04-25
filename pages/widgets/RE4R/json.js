@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
-import ErrorPage from "components/Errors";
+import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
 
@@ -29,7 +29,7 @@ const RE4RJSON = () => {
     const appendData = d => {
         if (d === null) return;
         setData(d);
-        if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
+        // if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
     };
 
     const handleConnect = useCallback(() => {
@@ -64,8 +64,8 @@ const RE4RJSON = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage connected={connected} callback={handleConnect} />;
-    if (data.GameName !== "RE4R") return <ErrorPage connected={connected} callback={handleConnect} />;
+    if (!connected) return <ErrorPage background="bg-re4" connected={connected} callback={handleConnect} />;
+    if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
 
     const { PlayerHealth, Rank, GameStatsKillCountElement, EnemyHealth, IGTFormattedString } = data;
     const { CurrentHitPoint, DefaultHitPoint, Percentage, CurrentHealthState } = PlayerHealth;

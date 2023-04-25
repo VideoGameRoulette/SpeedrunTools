@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
-import ErrorPage from "components/Errors";
+import { ErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
 

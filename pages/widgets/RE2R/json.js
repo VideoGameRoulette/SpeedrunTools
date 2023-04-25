@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
+import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
 
@@ -28,7 +29,7 @@ const RE2RJSON = () => {
     const appendData = d => {
         if (d === null) return;
         setData(d);
-        if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
+        // if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
     };
 
     const handleConnect = useCallback(() => {
@@ -63,8 +64,8 @@ const RE2RJSON = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <div>No Game Detected</div>;
-    if (data.GameName !== "RE2R") return <div>Incorrect Game Detected: {data.GameName}</div>;
+    if (!connected) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
+    if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
     const { Player, PlayerName, RankManager, EnemyHealth, IGTFormattedString } = data;
     const { CurrentHP, MaxHP, Percentage, CurrentHealthState } = Player;
@@ -82,12 +83,12 @@ const RE2RJSON = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2 bg-black">
                 <TextBlock label="IGT" val={IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
                 <HealthBar current={CurrentHP} max={MaxHP} percent={Percentage} label={PlayerName} colors={GetColor(CurrentHealthState)} />
                 <TextBlocks labels={["Rank", "RankScore"]} vals={[Rank, RankScore]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaximumHP} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
                 ))}
             </div>
         </>
