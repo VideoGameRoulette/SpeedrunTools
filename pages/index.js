@@ -15,6 +15,16 @@ const links = [
   },
   {
     name: 'JSON',
+    href: '/widgets/RE3R/json',
+    active: false
+  },
+  {
+    name: 'Websocket',
+    href: '/widgets/RE3R/ws',
+    active: false
+  },
+  {
+    name: 'JSON',
     href: '/widgets/RE4R/json',
     active: false
   },

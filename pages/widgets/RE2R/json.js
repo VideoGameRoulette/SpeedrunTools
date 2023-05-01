@@ -55,23 +55,23 @@ const RE2RJSON = () => {
         handleConnect();
     }, [handleConnect]);
 
-    function GetColor(state) {
-        if (state == "Gassed") return ["bg-rose-900", "text-rose-300"];
-        if (state == "Poisoned") return ["bg-indigo-900", "text-indigo-300"];
-        if (state == "Fine") return ["bg-green-800", "text-green-300"];
-        if (state == "FineToo") return ["bg-green-900", "text-green-300"];
-        if (state == "Caution") return ["bg-yellow-800", "text-yellow-300"];
+    const GetColor = (state) => {
+        if (state === "Gassed") return ["bg-rose-900", "text-rose-300"];
+        if (state === "Poisoned") return ["bg-indigo-900", "text-indigo-300"];
+        if (state === "Fine") return ["bg-green-800", "text-green-300"];
+        if (state === "FineToo") return ["bg-green-900", "text-green-300"];
+        if (state === "Caution") return ["bg-yellow-800", "text-yellow-300"];
         return ["bg-red-900", "text-red-300"];
     }
 
     if (!connected) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
-    const { Player, PlayerName, RankManager, EnemyHealth, IGTFormattedString } = data;
-    const { CurrentHP, MaxHP, Percentage, CurrentHealthState } = Player;
-    const { Rank, RankScore } = RankManager;
+    const { Timer, RankManager, PlayerManager, Enemies } = data;
+    const { CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
+    const { GameRank, RankPoint } = RankManager;
 
-    const filterdEnemies = EnemyHealth.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
+    const filterdEnemies = Enemies.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
@@ -84,11 +84,11 @@ const RE2RJSON = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="absolute w-full h-full flex flex-col p-4 gap-2 bg-black">
-                <TextBlock label="IGT" val={IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
-                <HealthBar current={CurrentHP} max={MaxHP} percent={Percentage} label={PlayerName} colors={GetColor(CurrentHealthState)} />
-                <TextBlocks labels={["Rank", "RankScore"]} vals={[Rank, RankScore]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                <HealthBar current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
+                <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaximumHP} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={enemy.EnemyTypeString} colors={["bg-red-900", "text-red-300"]} />
                 ))}
             </div>
         </>

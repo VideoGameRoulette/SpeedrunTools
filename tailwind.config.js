@@ -28,6 +28,7 @@ module.exports = {
         "icon": "url('/imgs/icon.png')",
         "main": "url('/imgs/background.jpeg')",
         "re2": "url('/imgs/background2.jpeg')",
+        "re3": "url('/imgs/background3.jpg')",
         "re4": "url('/imgs/background.jpeg')",
         "title": "url('/imgs/TitleScreen.png')"
       }
