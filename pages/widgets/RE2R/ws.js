@@ -52,7 +52,7 @@ const RE2RWS = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage connected={connected} callback={handleConnect} />;
+    if (!connected) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
     const { Timer, RankManager, PlayerManager, Enemies } = data;

@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+	background: black;
+}
 
 .menu-one .line {
 	transition: y 300ms ease-in 300ms, rotate 300ms ease-in, opacity 0ms 300ms;

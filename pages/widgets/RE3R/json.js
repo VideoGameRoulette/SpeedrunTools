@@ -68,12 +68,20 @@ const RE3RJSON = () => {
     if (data.GameName !== "RE3R") return <GameErrorPage background="bg-re3" callback={handleConnect} />;
 
     const { Timer, RankManager, PlayerManager, Enemies } = data;
-    const { CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
+    const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
 
     const filterdEnemies = Enemies.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
+
+    const GetEnemyName = (id) => {
+        if (id === 14) return "Licker";
+        if (id === 16) return "Hunter γ";
+        if (id >= 23 && id <= 38) return "Nemesis";
+        if (id < 23) return "Zombie";
+        return "??";
+    }
 
     return (
         <>
@@ -83,12 +91,12 @@ const RE3RJSON = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2 bg-black">
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
                 <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
-                <HealthBar current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
+                <HealthBar id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
                 <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={enemy.EnemyTypeString} colors={["bg-red-900", "text-red-300"]} />
+                    <HealthBar key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
             </div>
         </>

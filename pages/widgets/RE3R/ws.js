@@ -52,8 +52,8 @@ const RE4RWS = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage connected={connected} callback={handleConnect} />;
-    if (data.GameName !== "RE3R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
+    if (!connected) return <ErrorPage background="bg-re3" connected={connected} callback={handleConnect} />;
+    if (data.GameName !== "RE3R") return <GameErrorPage background="bg-re3" callback={handleConnect} />;
 
     const { Timer, RankManager, PlayerManager, Enemies } = data;
     const { CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
