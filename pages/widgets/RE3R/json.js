@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
+import ContextMenu from "components/ContextMenu";
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -25,6 +26,21 @@ const Desc = (a, b) => {
 const RE3RJSON = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+    const [bossOnly, SetBossOnly] = useState(false);
+    const [showRank, SetShowRank] = useState(true);
+    const [showIGT, SetShowIGT] = useState(true);
+
+    const handleContextMenu = (event) => {
+        event.preventDefault();
+        setShowContextMenu(true);
+        setContextMenuPos({ x: event.pageX, y: event.pageY });
+    };
+
+    const handleCloseContextMenu = () => {
+        setShowContextMenu(false);
+    };
 
     const appendData = d => {
         if (d === null) return;
@@ -71,16 +87,23 @@ const RE3RJSON = () => {
     const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
 
-    const filterdEnemies = Enemies.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
+    const isBoss = [23, 31, 35, 34];
+
+    const filterdEnemies = Enemies.filter(m => { return (bossOnly ? m.IsAlive && isBoss.includes(m.EnemyID) : m.IsAlive && m.EnemyID !== 30) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
     const GetEnemyName = (id) => {
         if (id === 14) return "Licker";
+        if (id === 15) return "Hunter β";
         if (id === 16) return "Hunter γ";
-        if (id >= 23 && id <= 38) return "Nemesis";
-        if (id < 23) return "Zombie";
-        return "??";
+        if (id === 17) return "Drain Deimos";
+        if (id === 18) return "Zombie Dog";
+        if (id === 22) return "Pale Head";
+        if (id === 23 || id === 30) return "Nemesis";
+        if (id === 31 || id === 35) return "Nemesis 2";
+        if (id === 34) return "Nemesis 3";
+        return "Zombie";
     }
 
     return (
@@ -91,10 +114,27 @@ const RE3RJSON = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
-                <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2" onContextMenu={handleContextMenu} onClick={() => handleCloseContextMenu()} >
+                {showContextMenu && (
+                    <ContextMenu
+                        x={contextMenuPos.x}
+                        y={contextMenuPos.y}
+                        onClose={handleCloseContextMenu}
+                        bossOnly={bossOnly}
+                        SetBossOnly={SetBossOnly}
+                        showRank={showRank}
+                        SetShowRank={SetShowRank}
+                        showIGT={showIGT}
+                        SetShowIGT={SetShowIGT}
+                    />
+                )}
+                {showIGT && (
+                    <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
                 <HealthBar id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
-                <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                {showRank && (
+                    <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
                 {filterdEnemies.map((enemy, idx) => (
                     <HealthBar key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
