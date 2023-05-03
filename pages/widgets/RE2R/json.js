@@ -111,12 +111,13 @@ const RE2RJSON = () => {
     });
 
     const GetEnemyName = (id) => {
+        if (id === 0) return "Zombie (M)";
+        if (id === 1) return "Zombie (F)";
         if (id === 2) return "Fat Zombie";
         if (id === 3) return "Licker";
         if (id === 4) return "Zombie Dog";
         if (id === 12) return "G";
-        if (id > 22) return "??";
-        return "Zombie";
+        return "??";
     }
 
 
