@@ -89,21 +89,23 @@ const RE2RJSON = () => {
     const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
 
-    const isBoss = [12];
+    const isBoss = [10, 12];
+    const notEnemy = [18];
 
     const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
     const IsBossOnly = (enemy) => enemy.IsAlive && isBoss.includes(enemy.EnemyID);
+    const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.EnemyID);
 
     const filterConditions = (enemy) => {
-        console.log("Damaged Only:", damagedOnly);
-        console.log("Boss Only:", bossOnly);
+        // console.log("Damaged Only:", damagedOnly);
+        // console.log("Boss Only:", bossOnly);
         if (damagedOnly && bossOnly)
-            return IsBossOnly(enemy) && IsDamaged(enemy);
+            return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
         if (bossOnly)
-            return IsBossOnly(enemy);
+            return IsBossOnly(enemy) && IgnoreEnemy(enemy);
         if (damagedOnly)
-            return IsDamaged(enemy);
-        return enemy.IsAlive;
+            return IsDamaged(enemy) && IgnoreEnemy(enemy);
+        return enemy.IsAlive && IgnoreEnemy(enemy);
     }
 
     const filterdEnemies = Enemies.filter(m => { return filterConditions(m) }).sort(function (a, b) {
@@ -116,7 +118,9 @@ const RE2RJSON = () => {
         if (id === 2) return "Fat Zombie";
         if (id === 3) return "Licker";
         if (id === 4) return "Zombie Dog";
+        if (id === 10) return "Mr. X";
         if (id === 12) return "G";
+        if (id === 18) return "Chief Irons";
         return "??";
     }
 
