@@ -118,8 +118,14 @@ const RE2RJSON = () => {
         if (id === 2) return "Fat Zombie";
         if (id === 3) return "Licker";
         if (id === 4) return "Zombie Dog";
+        if (id === 6) return "G-Young";
+        if (id === 7) return "Ivy";
+        if (id === 8) return "G-Adult";
         if (id === 10) return "Mr. X";
         if (id === 12) return "G";
+        if (id === 13) return "G2";
+        if (id === 15) return "G3";
+        if (id === 16) return "G4";
         if (id === 18) return "Chief Irons";
         return "??";
     }
