@@ -7,6 +7,12 @@ const ContextMenu = ({ x, y, onClose, ...props }) => {
         props.SetBossOnly(prev => !prev);
     };
 
+    const handleDamageClick = () => {
+        // Handle click on context menu item
+        onClose();
+        props.SetDamagedOnly(prev => !prev);
+    };
+
     const handleRankClick = () => {
         // Handle click on context menu item
         onClose();
@@ -19,13 +25,29 @@ const ContextMenu = ({ x, y, onClose, ...props }) => {
         props.SetShowIGT(prev => !prev);
     };
 
+    const handleIDClick = () => {
+        // Handle click on context menu item
+        onClose();
+        props.SetShowID(prev => !prev);
+    };
+
     return (
         <div className="absolute z-50 bg-slate-900 text-gray-200 shadow flex flex-col justify-center items-center p-4 font-bold gap-1 text-center" style={{ top: y, left: x }}>
             <div className="w-full pb-2 border-b">Settings</div>
             <div className="w-full hover:bg-slate-700 p-4 font-normal cursor-pointer"
+                onClick={handleIDClick}
+            >
+                {props.showID ? "Hide Enemy ID's" : "Show Enemy ID's"}
+            </div>
+            <div className="w-full hover:bg-slate-700 p-4 font-normal cursor-pointer"
                 onClick={handleBossClick}
             >
                 {props.bossOnly ? "Show All Enemies" : "Show Boss Only"}
+            </div>
+            <div className="w-full hover:bg-slate-700 p-4 font-normal cursor-pointer"
+                onClick={handleDamageClick}
+            >
+                {props.damagedOnly ? "Show All Alive Enemies" : "Show Only Damaged Enemies"}
             </div>
             <div className="w-full hover:bg-slate-700 p-4 font-normal cursor-pointer"
                 onClick={handleRankClick}
@@ -38,7 +60,6 @@ const ContextMenu = ({ x, y, onClose, ...props }) => {
                 {props.showIGT ? "Hide IGT" : "Show IGT"}
             </div>
         </div>
-
     );
 };
 

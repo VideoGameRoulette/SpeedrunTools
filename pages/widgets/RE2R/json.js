@@ -29,8 +29,10 @@ const RE2RJSON = () => {
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
     const [bossOnly, SetBossOnly] = useState(false);
+    const [damagedOnly, SetDamagedOnly] = useState(false);
     const [showRank, SetShowRank] = useState(true);
     const [showIGT, SetShowIGT] = useState(true);
+    const [showID, SetShowID] = useState(false);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
@@ -87,22 +89,36 @@ const RE2RJSON = () => {
     const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
 
-    const isBoss = [];
+    const isBoss = [12];
 
-    const filterdEnemies = Enemies.filter(m => { return (bossOnly ? m.IsAlive && isBoss.includes(m.EnemyID) : m.IsAlive) }).sort(function (a, b) {
+    const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
+    const IsBossOnly = (enemy) => enemy.IsAlive && isBoss.includes(enemy.EnemyID);
+
+    const filterConditions = (enemy) => {
+        console.log("Damaged Only:", damagedOnly);
+        console.log("Boss Only:", bossOnly);
+        if (damagedOnly && bossOnly)
+            return IsBossOnly(enemy) && IsDamaged(enemy);
+        if (bossOnly)
+            return IsBossOnly(enemy);
+        if (damagedOnly)
+            return IsDamaged(enemy);
+        return enemy.IsAlive;
+    }
+
+    const filterdEnemies = Enemies.filter(m => { return filterConditions(m) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
     const GetEnemyName = (id) => {
-        if (id === 14) return "Licker";
-        if (id === 15) return "Hunter β";
-        if (id === 16) return "Hunter γ";
-        if (id === 17) return "Drain Deimos";
-        if (id === 18) return "Zombie Dog";
-        if (id === 22) return "Pale Head";
+        if (id === 2) return "Fat Zombie";
+        if (id === 3) return "Licker";
+        if (id === 4) return "Zombie Dog";
+        if (id === 12) return "G";
         if (id > 22) return "??";
         return "Zombie";
     }
+
 
     return (
         <>
@@ -124,17 +140,21 @@ const RE2RJSON = () => {
                         SetShowRank={SetShowRank}
                         showIGT={showIGT}
                         SetShowIGT={SetShowIGT}
+                        damagedOnly={damagedOnly}
+                        SetDamagedOnly={SetDamagedOnly}
+                        showID={showID}
+                        SetShowID={SetShowID}
                     />
                 )}
                 {showIGT && (
                     <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
-                <HealthBar id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
+                <HealthBar debug={showID} id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
                 {showRank && (
                     <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
+                    <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
             </div>
         </>

@@ -1,11 +1,9 @@
 import { classNames } from "utils";
 
-const isDebug = process.env.NODE_ENV !== "production";
-
-const HealthBar = ({ id, current, max, percent, label, colors }) => {
+const HealthBar = ({ debug = false, id, current, max, percent, label, colors }) => {
     const p = percent * 100;
     const pStr = `${p}%`;
-    const sb = isDebug ? `[#${id}] ${label} ${current} / ${max}` : `${label} ${current} / ${max}`
+    const sb = debug ? `[#${id}] ${label} ${current} / ${max}` : `${label} ${current} / ${max}`
     return (
         <div className={classNames(max === 0 || max > 100000 ? "hidden" : "", "relative border-2 h-8")}>
             <div className={classNames(colors[0], "w-full h-7")} style={{ width: pStr }}>
