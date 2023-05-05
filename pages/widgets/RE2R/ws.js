@@ -39,7 +39,7 @@ const RE2RWS = () => {
             setConnected(false);
         };
         socket.onmessage = event => appendData(JSON.parse(event.data));
-    }, [setConnected, setData]);
+    }, [token, setConnected, setData]);
 
     useEffect(() => {
         handleConnect();
