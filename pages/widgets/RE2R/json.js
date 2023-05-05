@@ -89,7 +89,7 @@ const RE2RJSON = () => {
     const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
 
-    const isBoss = [10, 12];
+    const isBoss = [10, 11, 12, 13, 15, 16];
     const notEnemy = [18];
 
     const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
@@ -122,6 +122,7 @@ const RE2RJSON = () => {
         if (id === 7) return "Ivy";
         if (id === 8) return "G-Adult";
         if (id === 10) return "Mr. X";
+        if (id === 11) return "Tyrant";
         if (id === 12) return "G";
         if (id === 13) return "G2";
         if (id === 15) return "G3";

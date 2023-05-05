@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
-import { ErrorPage } from "components/Errors";
+import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
 
-const websocket_endpoint = 'ws://localhost:19906';
+const websocket_endpoint = "wss://relay.aricodes.net/ws"; // 'ws://localhost:19906';
 
 const Asc = (a, b) => {
     if (a > b) return +1;
@@ -21,6 +21,7 @@ const Desc = (a, b) => {
 const RE4RWS = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
+    const [token, setToken] = setState(null);
 
     const handleConnect = useCallback(() => {
         const appendData = d => {
@@ -31,6 +32,7 @@ const RE4RWS = () => {
 
         const socket = new WebSocket(websocket_endpoint);
         socket.onopen = () => {
+            socket.send(`listen:${token}`);
             setConnected(true);
         };
         socket.onclose = () => {
@@ -52,8 +54,18 @@ const RE4RWS = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage connected={connected} callback={handleConnect} />;
-    if (data.GameName !== "RE4R") return <ErrorPage connected={connected} callback={handleConnect} />;
+    const promptToken = () => {
+        const tkn = prompt("Enter custom api token:");
+        if (tkn.length > 0) setToken(tkn);
+        else {
+            alert("You must provide a token to api.");
+            promptToken();
+        }
+    }
+
+    if (token === null) promptToken();
+    if (!connected) return <ErrorPage background="bg-re" connected={connected} callback={handleConnect} />;
+    if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re" callback={handleConnect} />;
 
     const { PlayerHealth, Rank, GameStatsKillCountElement, EnemyHealth, IGTFormattedString } = data;
     const { CurrentHitPoint, DefaultHitPoint, Percentage, CurrentHealthState } = PlayerHealth;
