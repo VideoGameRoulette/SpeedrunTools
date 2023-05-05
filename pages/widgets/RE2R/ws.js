@@ -21,7 +21,7 @@ const Desc = (a, b) => {
 const RE2RWS = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
-    const [token, setToken] = setState(null);
+    const [token, setToken] = useState(null);
 
     const handleConnect = useCallback(() => {
         const appendData = d => {
