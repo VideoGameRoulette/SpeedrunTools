@@ -21,6 +21,7 @@ const Desc = (a, b) => {
 const RE4RWS = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
+    const [input, setInput] = useState(null);
     const [token, setToken] = useState(null);
 
     const handleConnect = useCallback(() => {
@@ -54,16 +55,15 @@ const RE4RWS = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    const promptToken = () => {
-        const tkn = prompt("Enter custom api token:");
-        if (tkn.length > 0) setToken(tkn);
-        else {
-            alert("You must provide a token to api.");
-            promptToken();
-        }
-    }
-
-    if (token === null) promptToken();
+    if (token === null) return (
+        <div className="absolute w-full h-full flex flex-col justify-center items-center p-4">
+            <div className="bg-slate-900 w-full max-w-xl flex flex-col justify-center items-start p-8 gap-2">
+                <div className="text-gray-200">Please Enter token:</div>
+                <input className="w-full leading-8 pl-2" type="text" onChange={(e) => setInput(e.target.value)} />
+                <button className="w-full h-8 bg-green-800 hover:bg-green-600 text-gray-200 rounded-md" type="button" onClick={() => setToken(input)}>Submit</button>
+            </div>
+        </div>
+    );
     if (!connected) return <ErrorPage background="bg-re" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re" callback={handleConnect} />;
 
