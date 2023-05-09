@@ -365,7 +365,7 @@ const getWeaponImage = (item, disableBackground) => {
             if (item.WeaponParts == 1)
                 return <InventorySlot2 item={item} image="bg-re2rhandgunlightninghawk1" disableBackground={disableBackground} />;
             else if (item.WeaponParts == 2)
-                return <InventorySlot2 item={item} image="bg-re2rhandgunlightninghawk2" disableBackground={disableBackground} />;
+                return <InventorySlot item={item} image="bg-re2rhandgunlightninghawk2" disableBackground={disableBackground} />;
             else if (item.WeaponParts == 3)
                 return <InventorySlot2 item={item} image="bg-re2rhandgunlightninghawk3" disableBackground={disableBackground} />;
             else
