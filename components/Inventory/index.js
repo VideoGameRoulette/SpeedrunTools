@@ -362,7 +362,6 @@ const getWeaponImage = (item, disableBackground) => {
             return <InventorySlot2 item={item} image="bg-re2rsmgle5infinite" disableBackground={disableBackground} />;
 
         case 31:
-            equipped = Equipped(data, 31);
             if (item.WeaponParts == 1)
                 return <InventorySlot2 item={item} image="bg-re2rhandgunlightninghawk1" disableBackground={disableBackground} />;
             else if (item.WeaponParts == 2)
