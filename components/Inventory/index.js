@@ -8,7 +8,7 @@ const getItem = (item) => {
 const getItemImage = (item) => {
     switch (item.ItemId) {
         default:
-            return <InventorySlot item={item} image="" />;
+            return <InventorySlot item={item} image="bg-re2rempty brightness-[30%]" />;
         case 1:
             return <InventorySlot item={item} image="bg-re2rfirstaidspray" />;
         case 2:

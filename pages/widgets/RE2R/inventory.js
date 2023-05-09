@@ -13,16 +13,6 @@ const RE2RItems = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
 
-    const handleContextMenu = (event) => {
-        event.preventDefault();
-        setShowContextMenu(true);
-        setContextMenuPos({ x: event.pageX, y: event.pageY });
-    };
-
-    const handleCloseContextMenu = () => {
-        setShowContextMenu(false);
-    };
-
     const appendData = d => {
         if (d === null) return;
         setData(d);
@@ -63,7 +53,7 @@ const RE2RItems = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2" onContextMenu={handleContextMenu} onClick={() => handleCloseContextMenu()}>
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
                 <RE2RInventory items={Items} inventoryCount={InventoryCount} />
             </div>
         </>

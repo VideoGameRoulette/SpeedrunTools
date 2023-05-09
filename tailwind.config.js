@@ -33,6 +33,7 @@ module.exports = {
         "title": "url('/imgs/TitleScreen.png')",
         "re2rslot1": "url('/imgs/RE2R/Slot1.png')",
         "re2rslot2": "url('/imgs/RE2R/Slot2.png')",
+        "re2rempty": "url('/imgs/RE2R/Empty.png')",
         "re2rfirstaidspray": "url('/imgs/RE2R/FirstAidSpray.png')",
         "re2rgreenherb": "url('/imgs/RE2R/GreenHerb.png')",
         "re2rredherb": "url('/imgs/RE2R/RedHerb.png')",
