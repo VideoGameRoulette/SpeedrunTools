@@ -207,7 +207,7 @@ const getItemImage = (item, disableBackground) => {
         case 181:
             return <InventorySlot item={item} image="bg-re2rdispersalcartridgeherbicide" disableBackground={disableBackground} />;
         case 183:
-            return <InventorySlot item={item} image="bg-re2rjointplug" disableBackground={disableBackground} />;
+            return <InventorySlot2 item={item} image="bg-re2rjointplug" disableBackground={disableBackground} />;
         case 186:
             return <InventorySlot item={item} image="bg-re2rupgradechipadministrator" disableBackground={disableBackground} />;
         case 187:
