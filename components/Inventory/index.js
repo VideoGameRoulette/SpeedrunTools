@@ -431,6 +431,9 @@ const InventorySlot = ({ ...props }) => {
             {item.Count > 1 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
             )}
+            {item.Count === -1 && (
+                <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">∞</div>
+            )}
         </div>
     );
 }
