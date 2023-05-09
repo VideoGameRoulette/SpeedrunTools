@@ -358,7 +358,7 @@ const getWeaponImage = (item, disableBackground) => {
                 return <InventorySlot item={item} image="bg-re2rsmgmq11" disableBackground={disableBackground} />;
 
         case 23:
-            return <InventorySlot item={item} image="bg-re2rsmgle5infinite" disableBackground={disableBackground} />;
+            return <InventorySlot2 item={item} image="bg-re2rsmgle5infinite" disableBackground={disableBackground} />;
 
         case 31:
             equipped = Equipped(data, 31);
@@ -419,7 +419,7 @@ const getWeaponImage = (item, disableBackground) => {
         case 242:
             return <InventorySlot item={item} image="bg-re2rantitankrocketlauncher" disableBackground={disableBackground} />;
         case 252:
-            return <InventorySlot item={item} image="bg-re2rre2rminigun" disableBackground={disableBackground} />;
+            return <InventorySlot2 item={item} image="bg-re2rre2rminigun" disableBackground={disableBackground} />;
     }
 }
 

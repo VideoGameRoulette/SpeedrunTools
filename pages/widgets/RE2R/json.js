@@ -114,6 +114,10 @@ const RE2RJSON = () => {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
+    const sortedItems = Items.sort(function (a, b) {
+        return Asc(a.SlotNo, b.SlotNo) || Desc(a.SlotNo, b.SlotNo);
+    });
+
     const GetEnemyName = (id) => {
         if (id === 0) return "Zombie (M)";
         if (id === 1) return "Zombie (F)";
@@ -176,7 +180,7 @@ const RE2RJSON = () => {
                 {showLocation && (
                     <TextBlocks labels={["Location", "Map"]} vals={[`${LocationID} : ${LocationName}`, `${MapID} : ${MapName}`]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
-                <RE2RInventory items={Items} inventoryCount={InventoryCount} />
+                <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} />
                 {filterdEnemies.map((enemy, idx) => (
                     <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
