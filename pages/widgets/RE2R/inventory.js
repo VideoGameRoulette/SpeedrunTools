@@ -9,6 +9,18 @@ const JSON_PORT = 7190;
 const POLLING_RATE = 333;
 var JSON_ENDPOINT = `http://${JSON_ADDRESS}:${JSON_PORT}/`;
 
+const Asc = (a, b) => {
+    if (a > b) return +1;
+    if (a < b) return -1;
+    return 0;
+};
+
+const Desc = (a, b) => {
+    if (a > b) return -1;
+    if (a < b) return +1;
+    return 0;
+};
+
 const RE2RItems = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
@@ -45,6 +57,10 @@ const RE2RItems = () => {
 
     const { Items, InventoryCount } = data;
 
+    const sortedItems = Items.sort(function (a, b) {
+        return Asc(a.SlotNo, b.SlotNo) || Desc(a.SlotNo, b.SlotNo);
+    });
+
     return (
         <>
             <Head>
@@ -54,7 +70,7 @@ const RE2RItems = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="absolute w-full h-full flex flex-col p-4 gap-2">
-                <RE2RInventory items={Items} inventoryCount={InventoryCount} />
+                <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} />
             </div>
         </>
     );
