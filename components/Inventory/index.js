@@ -451,6 +451,7 @@ const InventorySlot2 = ({ ...props }) => {
 
 export const RE2RInventory = ({ items, inventoryCount }) => {
     const [disableBackground, setBackground] = useState(false);
+    console.log("Items Array", items);
     return (
         <div className="w-[344px] flex flex-wrap" onClick={() => setBackground(prev => !prev)}>
             {items.map((item, idx) => (
