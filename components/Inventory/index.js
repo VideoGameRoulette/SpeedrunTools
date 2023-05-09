@@ -415,7 +415,7 @@ const getWeaponImage = (item, disableBackground) => {
         case 85:
             return <InventorySlot item={item} image="bg-re2rhandgunsamuraiedgealbertwesker" disableBackground={disableBackground} />;
         case 222:
-            return <InventorySlot item={item} image="bg-re2ratm4" disableBackground={disableBackground} />;
+            return <InventorySlot2 item={item} image="bg-re2ratm4" disableBackground={disableBackground} />;
         case 242:
             return <InventorySlot item={item} image="bg-re2rantitankrocketlauncher" disableBackground={disableBackground} />;
         case 252:
@@ -427,8 +427,8 @@ const InventorySlot = ({ ...props }) => {
     const { item, image, disableBackground } = props;
 
     return (
-        <div className={classNames(disableBackground ? "" : "bg-re2rslot1 ", "relative z-1 w-[76px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
-            <div className={classNames(image, "w-full h-full bg-contain bg-center")} />
+        <div className={classNames(disableBackground ? "" : "bg-re2rslot1", "relative z-1 w-[76px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
+            <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
             {item.Count > 1 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
             )}
@@ -440,8 +440,8 @@ const InventorySlot2 = ({ ...props }) => {
     const { item, image, disableBackground } = props;
 
     return (
-        <div className={classNames(disableBackground ? "" : "bg-re2rslot2 ", "relative z-1 w-[162px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
-            <div className={classNames(image, "w-full h-full bg-contain bg-center")} />
+        <div className={classNames(disableBackground ? "" : "bg-re2rslot2", "relative z-1 w-[162px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
+            <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
             {item.Count > 0 && (
                 <div className="absolute bottom-[3px] right-[2px] pr-[5px] pl-3 bg-black">{item.Count}</div>
             )}
