@@ -4,6 +4,7 @@ import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocks } from "components/TextBlock";
 import ContextMenu from "components/ContextMenu";
+import { RE2RInventory } from "components/Inventory";
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -33,6 +34,8 @@ const RE2RJSON = () => {
     const [showRank, SetShowRank] = useState(true);
     const [showIGT, SetShowIGT] = useState(true);
     const [showID, SetShowID] = useState(false);
+    const [showLocation, SetShowLocation] = useState(true);
+    const [showInventory, SetShowInventory] = useState(true);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
@@ -85,9 +88,10 @@ const RE2RJSON = () => {
     if (!connected) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
-    const { Timer, RankManager, PlayerManager, Enemies } = data;
+    const { Timer, RankManager, PlayerManager, Items, Enemies, InventoryCount, LocationID, LocationName, MapID, MapName } = data;
     const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
+    const { MeasureDemoSpendingTime, MeasurePauseSpendingTime } = Timer;
 
     const isBoss = [10, 11, 12, 13, 15, 16];
     const notEnemy = [18];
@@ -97,8 +101,6 @@ const RE2RJSON = () => {
     const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.EnemyID);
 
     const filterConditions = (enemy) => {
-        // console.log("Damaged Only:", damagedOnly);
-        // console.log("Boss Only:", bossOnly);
         if (damagedOnly && bossOnly)
             return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
         if (bossOnly)
@@ -131,7 +133,6 @@ const RE2RJSON = () => {
         return "??";
     }
 
-
     return (
         <>
             <Head>
@@ -156,15 +157,26 @@ const RE2RJSON = () => {
                         SetDamagedOnly={SetDamagedOnly}
                         showID={showID}
                         SetShowID={SetShowID}
+                        showLocation={showLocation}
+                        SetShowLocation={SetShowLocation}
+                        showInventory={showInventory}
+                        SetShowInventory={SetShowInventory}
                     />
                 )}
                 {showIGT && (
-                    <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                    <>
+                        <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                        <TextBlocks labels={["IsCutscene", "IsPaused"]} vals={[MeasureDemoSpendingTime.toString(), MeasurePauseSpendingTime.toString()]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                    </>
                 )}
                 <HealthBar debug={showID} id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
                 {showRank && (
                     <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
+                {showLocation && (
+                    <TextBlocks labels={["Location", "Map"]} vals={[`${LocationID} : ${LocationName}`, `${MapID} : ${MapName}`]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
+                <RE2RInventory items={Items} inventoryCount={InventoryCount} />
                 {filterdEnemies.map((enemy, idx) => (
                     <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
