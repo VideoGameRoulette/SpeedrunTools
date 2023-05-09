@@ -180,7 +180,9 @@ const RE2RJSON = () => {
                 {showLocation && (
                     <TextBlocks labels={["Location", "Map"]} vals={[`${LocationID} : ${LocationName}`, `${MapID} : ${MapName}`]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
-                <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} />
+                {showInventory && (
+                    <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} />
+                )}
                 {filterdEnemies.map((enemy, idx) => (
                     <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
