@@ -128,6 +128,7 @@ module.exports = {
         "re2rkeyclub": "url('/imgs/RE2R/KeyClub.png')",
         "re2rkeyheart": "url('/imgs/RE2R/KeyHeart.png')",
         "re2rdigitalvideocassette": "url('/imgs/RE2R/DigitalVideoCassette.png')",
+        "re2rtbarvalvehandle": "url('/imgs/RE2R/TBarValveHandle.png')",
         "re2rdispersalcartridgeempty": "url('/imgs/RE2R/DispersalCartridgeEmpty.png')",
         "re2rdispersalcartridgesolution": "url('/imgs/RE2R/DispersalCartridgeSolution.png')",
         "re2rdispersalcartridgeherbicide": "url('/imgs/RE2R/DispersalCartridgeHerbicide.png')",
