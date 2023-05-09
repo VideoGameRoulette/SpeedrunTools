@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { classNames } from "utils";
 
-const getItem = (item, disableBackground) => {
+const getItem = (item, disableBackground, isFatSlot) => {
+    if (isFatSlot) return <div className="hidden"></div>;
     if (item.WeaponId == -1) return getItemImage(item, disableBackground);
     return getWeaponImage(item, disableBackground);
 }
@@ -425,7 +426,6 @@ const getWeaponImage = (item, disableBackground) => {
 
 const InventorySlot = ({ ...props }) => {
     const { item, image, disableBackground } = props;
-    // if (itemSizes[item.SlotNo - 1] === 2) return;
     return (
         <div className={classNames(disableBackground ? "" : "bg-re2rslot1", "relative z-1 w-[76px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
             <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
@@ -442,7 +442,10 @@ const InventorySlot2 = ({ ...props }) => {
         <div className={classNames(disableBackground ? "" : "bg-re2rslot2", "relative z-1 w-[162px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
             <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
             {item.Count > 0 && (
-                <div className="absolute bottom-[3px] right-[2px] pr-[5px] pl-3 bg-black">{item.Count}</div>
+                <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
+            )}
+            {item.Count === -1 && (
+                <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">∞</div>
             )}
         </div>
     );
@@ -451,9 +454,9 @@ const InventorySlot2 = ({ ...props }) => {
 export const RE2RInventory = ({ items, inventoryCount }) => {
     const [disableBackground, setBackground] = useState(false);
     return (
-        <div className="w-[344px] flex flex-wrap" onClick={() => setBackground(prev => !prev)}>
+        <div className="w-[344px] flex flex-wrap justify-between" onClick={() => setBackground(prev => !prev)}>
             {items.map((item, idx) => (
-                Boolean(idx < inventoryCount)) && (getItem(item, disableBackground))
+                Boolean(idx < inventoryCount)) && (getItem(item, disableBackground, idx > 0 ? items[idx - 1].IsFatSlot : false))
             )}
         </div>
     )
