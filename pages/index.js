@@ -29,6 +29,11 @@ const links = [
     active: false
   },
   {
+    name: 'Inventory',
+    href: '/widgets/RE3R/inventory',
+    active: false
+  },
+  {
     name: 'JSON',
     href: '/widgets/RE4R/json',
     active: false

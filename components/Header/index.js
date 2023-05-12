@@ -70,7 +70,7 @@ const Header = ({ links }) => {
                                                 />
                                             </Disclosure.Button>
                                             <Disclosure.Panel className="mt-2 space-y-2">
-                                                {links.slice(3, 5).map((item) => (
+                                                {links.slice(3, 6).map((item) => (
                                                     <Disclosure.Button
                                                         key={item.name}
                                                         as="a"
@@ -95,7 +95,7 @@ const Header = ({ links }) => {
                                                 />
                                             </Disclosure.Button>
                                             <Disclosure.Panel className="mt-2 space-y-2">
-                                                {links.slice(5, 7).map((item) => (
+                                                {links.slice(6, 8).map((item) => (
                                                     <Disclosure.Button
                                                         key={item.name}
                                                         as="a"

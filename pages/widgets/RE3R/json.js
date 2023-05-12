@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
 import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
-import { TextBlock, TextBlocks } from "components/TextBlock";
+import { TextBlock, TextBlocksRowBetween } from "components/TextBlock";
 import ContextMenu from "components/ContextMenu";
+import { RE3RInventory } from "components/Inventory";
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -23,6 +24,8 @@ const Desc = (a, b) => {
     return 0;
 };
 
+const isDebug = process.env.NODE_ENV != "production";
+
 const RE3RJSON = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
@@ -33,6 +36,8 @@ const RE3RJSON = () => {
     const [showRank, SetShowRank] = useState(true);
     const [showIGT, SetShowIGT] = useState(true);
     const [showID, SetShowID] = useState(false);
+    const [showLocation, SetShowLocation] = useState(true);
+    const [showInventory, SetShowInventory] = useState(true);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
@@ -85,9 +90,10 @@ const RE3RJSON = () => {
     if (!connected) return <ErrorPage background="bg-re3" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE3R") return <GameErrorPage background="bg-re3" callback={handleConnect} />;
 
-    const { Timer, RankManager, PlayerManager, Enemies } = data;
-    const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
+    const { Timer, RankManager, PlayerManager, Items, Enemies, InventoryCount, LocationID, LocationName, MapID, MapName, MainSlot, SubSlot, Shortcuts } = data;
+    const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState, Position } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
+    const { MeasureDemoSpendingTime, MeasurePauseSpendingTime } = Timer;
 
     const isBoss = [23, 31, 35, 34];
     const notEnemy = [30];
@@ -105,6 +111,10 @@ const RE3RJSON = () => {
             return IsDamaged(enemy) && IgnoreEnemy(enemy);
         return enemy.IsAlive && IgnoreEnemy(enemy);
     }
+
+    const sortedItems = Items.sort(function (a, b) {
+        return Asc(a.SlotNo, b.SlotNo) || Desc(a.SlotNo, b.SlotNo);
+    });
 
     const filterdEnemies = Enemies.filter(m => { return filterConditions(m) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
@@ -147,14 +157,30 @@ const RE3RJSON = () => {
                         SetDamagedOnly={SetDamagedOnly}
                         showID={showID}
                         SetShowID={SetShowID}
+                        showLocation={showLocation}
+                        SetShowLocation={SetShowLocation}
+                        showInventory={showInventory}
+                        SetShowInventory={SetShowInventory}
                     />
                 )}
+                {isDebug && (
+                    <TextBlocksRowBetween labels={["IsCutscene", "IsPaused"]} vals={[MeasureDemoSpendingTime.toString(), MeasurePauseSpendingTime.toString()]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
                 {showIGT && (
-                    <TextBlock debug={showID} label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                    <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
+                {showLocation && (
+                    <TextBlocksRowBetween labels={["Location", "Map"]} vals={[`${LocationID} : ${LocationName}`, `${MapID} : ${MapName}`]} colors={["text-white", "text-green-500"]} hideParam={false} />
                 )}
                 <HealthBar id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
+                {isDebug && (
+                    <TextBlocksRowBetween labels={["X", "Y", "Z"]} vals={[Position.X.toFixed(3), Position.Y.toFixed(3), Position.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
                 {showRank && (
-                    <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                    <TextBlocksRowBetween labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
+                )}
+                {showInventory && (
+                    <RE3RInventory items={sortedItems} inventoryCount={InventoryCount} mainSlot={MainSlot} subSlot={SubSlot} shortcuts={Shortcuts} />
                 )}
                 {filterdEnemies.map((enemy, idx) => (
                     <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />

@@ -132,6 +132,14 @@ body {
   height: calc(100% - 20px);
 }
 
+.smframe {
+	position: relative;
+    width: 100%;
+	height: auto;
+	border: 12px solid transparent;
+	border-image: url(/imgs/frame2.png) 12 round;
+}
+
 .frame {
   border-image: url(/imgs/Frame.svg) 10 round;
 }

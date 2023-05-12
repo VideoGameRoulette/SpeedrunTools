@@ -55,7 +55,7 @@ const RE2RItems = () => {
     if (!connected) return <></>;
     if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
-    const { Items, InventoryCount } = data;
+    const { Items, InventoryCount, MainSlot, SubSlot, Shortcuts } = data;
 
     const sortedItems = Items.sort(function (a, b) {
         return Asc(a.SlotNo, b.SlotNo) || Desc(a.SlotNo, b.SlotNo);
@@ -70,7 +70,7 @@ const RE2RItems = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className="absolute w-full h-full flex flex-col p-4 gap-2">
-                <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} />
+                <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} mainSlot={MainSlot} subSlot={SubSlot} shortcuts={Shortcuts} />
             </div>
         </>
     );
