@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
 import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
-import { TextBlock, TextBlocks } from "components/TextBlock";
+import { TextBlock, TextBlocksRowBetween } from "components/TextBlock";
+import ContextMenu from "components/ContextMenu";
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -22,9 +23,33 @@ const Desc = (a, b) => {
     return 0;
 };
 
+// const isDebug = process.env.NODE_ENV != "production";
+
 const RE4RJSON = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+    // const [bossOnly, SetBossOnly] = useState(false);
+    const [damagedOnly, SetDamagedOnly] = useState(true);
+    const [showRank, SetShowRank] = useState(true);
+    const [showIGT, SetShowIGT] = useState(true);
+    // const [showID, SetShowID] = useState(false);
+    // const [showLocation, SetShowLocation] = useState(true);
+    // const [showInventory, SetShowInventory] = useState(true);
+    const [showPosition, SetShowPosition] = useState(false);
+    const [showRotation, SetShowRotation] = useState(false);
+    const [showKillCount, SetKillCount] = useState(false);
+
+    const handleContextMenu = (event) => {
+        event.preventDefault();
+        setShowContextMenu(true);
+        setContextMenuPos({ x: event.pageX, y: event.pageY });
+    };
+
+    const handleCloseContextMenu = () => {
+        setShowContextMenu(false);
+    };
 
     const appendData = d => {
         if (d === null) return;
@@ -56,24 +81,42 @@ const RE4RJSON = () => {
     }, [handleConnect]);
 
     function GetColor(state) {
-        if (state == "Gassed") return ["bg-rose-900", "text-rose-300"];
-        if (state == "Poisoned") return ["bg-indigo-900", "text-indigo-300"];
-        if (state == "Fine") return ["bg-green-800", "text-green-300"];
-        if (state == "FineToo") return ["bg-green-900", "text-green-300"];
-        if (state == "Caution") return ["bg-yellow-800", "text-yellow-300"];
+        console.log(state);
+        if (state === "Fine") return ["bg-green-800", "text-green-300"];
+        if (state === "FineToo") return ["bg-green-900", "text-green-300"];
+        if (state === "Caution") return ["bg-yellow-800", "text-yellow-300"];
         return ["bg-red-900", "text-red-300"];
     }
 
     if (!connected) return <ErrorPage background="bg-re4" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
 
-    const { PlayerHealth, Rank, GameStatsKillCountElement, EnemyHealth, IGTFormattedString } = data;
-    const { CurrentHitPoint, DefaultHitPoint, Percentage, CurrentHealthState } = PlayerHealth;
+    const { PlayerContext, Rank, GameStatsKillCountElement, EnemyHealth, Timer } = data;
+    const { SurvivorTypeString, Position, Rotation, Health, CurrentHealthState } = PlayerContext;
+    const { CurrentHP, MaxHP, Percentage } = Health
     const { Rank: _Rank, ActionPoint, ItemPoint } = Rank;
     const { Count } = GameStatsKillCountElement;
+    const { IGTFormattedString } = Timer;
 
-    const filterdEnemies = EnemyHealth.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
-        return Asc(a.CurrentHitPoint, b.CurrentHitPoint) || Desc(a.CurrentHitPoint, b.CurrentHitPoint);
+    // const isBoss = [];
+    const notEnemy = [];
+
+    const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
+    // const IsBossOnly = (enemy) => enemy.IsAlive && isBoss.includes(enemy.EnemyID);
+    const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.EnemyID);
+
+    const filterConditions = (enemy) => {
+        // if (damagedOnly && bossOnly)
+        //     return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
+        // if (bossOnly)
+        //     return IsBossOnly(enemy) && IgnoreEnemy(enemy);
+        if (damagedOnly)
+            return IsDamaged(enemy) && IgnoreEnemy(enemy);
+        return enemy.IsAlive && IgnoreEnemy(enemy);
+    }
+
+    const filterdEnemies = EnemyHealth.filter(m => { return (filterConditions(m)) }).sort(function (a, b) {
+        return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
     return (
@@ -84,12 +127,44 @@ const RE4RJSON = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
-                <TextBlock label="IGT" val={IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
-                <HealthBar current={CurrentHitPoint} max={DefaultHitPoint} percent={Percentage} label="Leon" colors={GetColor(CurrentHealthState)} />
-                <TextBlocks labels={["Rank", "ActionPoint", "ItemPoint", "Kills"]} vals={[_Rank, ActionPoint, ItemPoint, Count]} colors={["text-white", "text-green-500"]} hideParam={false} />
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2" onContextMenu={handleContextMenu} onClick={() => handleCloseContextMenu()}>
+                {showContextMenu && (
+                    <ContextMenu
+                        x={contextMenuPos.x}
+                        y={contextMenuPos.y}
+                        onClose={handleCloseContextMenu}
+                        bossOnly={null}
+                        SetBossOnly={null}
+                        showRank={showRank}
+                        SetShowRank={SetShowRank}
+                        showIGT={showIGT}
+                        SetShowIGT={SetShowIGT}
+                        damagedOnly={damagedOnly}
+                        SetDamagedOnly={SetDamagedOnly}
+                        showID={null}
+                        SetShowID={null}
+                        showLocation={null}
+                        SetShowLocation={null}
+                        showInventory={null}
+                        SetShowInventory={null}
+                        showPosition={showPosition}
+                        SetShowPosition={SetShowPosition}
+                        showRotation={showRotation}
+                        SetShowRotation={SetShowRotation}
+                        showDebug={null}
+                        SetShowDebug={null}
+                        showKillCount={showKillCount}
+                        SetKillCount={SetKillCount}
+                    />
+                )}
+                <TextBlock label="IGT" val={IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={!showIGT} />
+                <HealthBar current={CurrentHP} max={MaxHP} percent={Percentage} label={SurvivorTypeString} colors={GetColor(CurrentHealthState)} />
+                <TextBlocksRowBetween labels={["X", "Y", "Z"]} vals={[Position.X.toFixed(3), Position.Y.toFixed(3), Position.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showPosition} />
+                <TextBlocksRowBetween labels={["RW", "RX", "RY", "RZ"]} vals={[Rotation.W.toFixed(3), Rotation.X.toFixed(3), Rotation.Y.toFixed(3), Rotation.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showRotation} />
+                <TextBlocksRowBetween labels={["Rank", "ActionPoint", "ItemPoint"]} vals={[_Rank, ActionPoint, ItemPoint]} colors={["text-white", "text-green-500"]} hideParam={!showRank} />
+                <TextBlock label="Kills" val={Count} colors={["text-white", "text-green-500"]} hideParam={!showKillCount} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHitPoint} max={enemy.DefaultHitPoint} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar debug={false} id={0} key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
                 ))}
             </div>
         </>

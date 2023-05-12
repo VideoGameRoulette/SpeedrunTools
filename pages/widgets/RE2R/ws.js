@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
 import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
-import { TextBlock, TextBlocks } from "components/TextBlock";
+import { TextBlock, TextBlocksRowBetween } from "components/TextBlock";
+import ContextMenu from "components/ContextMenu";
+import { RE2RInventory } from "components/Inventory";
 
 const websocket_endpoint = "wss://relay.aricodes.net/ws"; // 'ws://localhost:19906';
 
@@ -23,6 +25,27 @@ const RE2RWS = () => {
     const [connected, setConnected] = useState(false);
     const [input, setInput] = useState(null);
     const [token, setToken] = useState(null);
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+    const [showDebug, SetShowDebug] = useState(false);
+    const [bossOnly, SetBossOnly] = useState(false);
+    const [damagedOnly, SetDamagedOnly] = useState(false);
+    const [showRank, SetShowRank] = useState(true);
+    const [showIGT, SetShowIGT] = useState(true);
+    const [showID, SetShowID] = useState(false);
+    const [showLocation, SetShowLocation] = useState(true);
+    const [showInventory, SetShowInventory] = useState(true);
+    const [showPosition, SetShowPosition] = useState(true);
+
+    const handleContextMenu = (event) => {
+        event.preventDefault();
+        setShowContextMenu(true);
+        setContextMenuPos({ x: event.pageX, y: event.pageY });
+    };
+
+    const handleCloseContextMenu = () => {
+        setShowContextMenu(false);
+    };
 
     const handleConnect = useCallback(() => {
         const appendData = d => {
@@ -68,12 +91,34 @@ const RE2RWS = () => {
     if (connected || data === null) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
-    const { Timer, RankManager, PlayerManager, Enemies } = data;
-    const { CurrentSurvivorString, Health, CurrentHealthState } = PlayerManager;
+    const { Timer, RankManager, PlayerManager, Items, Enemies, InventoryCount, LocationID, LocationName, MapID, MapName, MainSlot, SubSlot, Shortcuts } = data;
+    const { CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState, Position } = PlayerManager;
     const { GameRank, RankPoint } = RankManager;
+    const { MeasureDemoSpendingTime, MeasurePauseSpendingTime } = Timer;
 
-    const filterdEnemies = Enemies.filter(m => { return (m.IsAlive) }).sort(function (a, b) {
+    const isBoss = [10, 11, 12, 13, 15, 16];
+    const notEnemy = [18];
+
+    const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
+    const IsBossOnly = (enemy) => enemy.IsAlive && isBoss.includes(enemy.EnemyID);
+    const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.EnemyID);
+
+    const filterConditions = (enemy) => {
+        if (damagedOnly && bossOnly)
+            return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
+        if (bossOnly)
+            return IsBossOnly(enemy) && IgnoreEnemy(enemy);
+        if (damagedOnly)
+            return IsDamaged(enemy) && IgnoreEnemy(enemy);
+        return enemy.IsAlive && IgnoreEnemy(enemy);
+    }
+
+    const filterdEnemies = Enemies.filter(m => { return filterConditions(m) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
+    });
+
+    const sortedItems = Items.sort(function (a, b) {
+        return Asc(a.SlotNo, b.SlotNo) || Desc(a.SlotNo, b.SlotNo);
     });
 
     return (
@@ -84,12 +129,45 @@ const RE2RWS = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="absolute w-full h-full flex flex-col p-4 gap-2">
-                <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={false} />
-                <HealthBar current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
-                <TextBlocks labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={false} />
+            <div className="absolute w-full h-full flex flex-col p-4 gap-2" onContextMenu={handleContextMenu} onClick={() => handleCloseContextMenu()}>
+                {showContextMenu && (
+                    <ContextMenu
+                        x={contextMenuPos.x}
+                        y={contextMenuPos.y}
+                        onClose={handleCloseContextMenu}
+                        bossOnly={bossOnly}
+                        SetBossOnly={SetBossOnly}
+                        showRank={showRank}
+                        SetShowRank={SetShowRank}
+                        showIGT={showIGT}
+                        SetShowIGT={SetShowIGT}
+                        damagedOnly={damagedOnly}
+                        SetDamagedOnly={SetDamagedOnly}
+                        showID={showID}
+                        SetShowID={SetShowID}
+                        showLocation={showLocation}
+                        SetShowLocation={SetShowLocation}
+                        showInventory={showInventory}
+                        SetShowInventory={SetShowInventory}
+                        showPosition={showPosition}
+                        SetShowPosition={SetShowPosition}
+                        showRotation={null}
+                        SetShowRotation={null}
+                        showDebug={showDebug}
+                        SetShowDebug={SetShowDebug}
+                    />
+                )}
+                <TextBlocksRowBetween labels={["IsCutscene", "IsPaused"]} vals={[MeasureDemoSpendingTime.toString(), MeasurePauseSpendingTime.toString()]} colors={["text-white", "text-green-500"]} hideParam={!isDebug} />
+                <TextBlock label="IGT" val={Timer.IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={!showIGT} />
+                <TextBlocksRowBetween labels={["Location", "Map"]} vals={[`${LocationID} : ${LocationName}`, `${MapID} : ${MapName}`]} colors={["text-white", "text-green-500"]} hideParam={!showLocation} />
+                <HealthBar debug={showID} id={CurrentSurvivor} current={Health.CurrentHP} max={Health.MaxHP} percent={Health.Percentage} label={CurrentSurvivorString} colors={GetColor(CurrentHealthState)} />
+                <TextBlocksRowBetween labels={["X", "Y", "Z"]} vals={[Position.X.toFixed(3), Position.Y.toFixed(3), Position.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showPosition} />
+                <TextBlocksRowBetween labels={["Rank", "RankScore"]} vals={[GameRank, RankPoint]} colors={["text-white", "text-green-500"]} hideParam={!showRank} />
+                {showInventory && (
+                    <RE2RInventory items={sortedItems} inventoryCount={InventoryCount} mainSlot={MainSlot} subSlot={SubSlot} shortcuts={Shortcuts} />
+                )}
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={enemy.EnemyTypeString} colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar debug={showID} key={`enemy${idx}`} id={enemy.EnemyID} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label={GetEnemyName(enemy.EnemyID)} colors={["bg-red-900", "text-red-300"]} />
                 ))}
             </div>
         </>
