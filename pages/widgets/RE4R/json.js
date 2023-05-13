@@ -34,7 +34,7 @@ const RE4RJSON = () => {
     const [damagedOnly, SetDamagedOnly] = useState(true);
     const [showRank, SetShowRank] = useState(true);
     const [showIGT, SetShowIGT] = useState(true);
-    // const [showID, SetShowID] = useState(false);
+    const [showID, SetShowID] = useState(false);
     // const [showLocation, SetShowLocation] = useState(true);
     // const [showInventory, SetShowInventory] = useState(true);
     const [showPosition, SetShowPosition] = useState(false);
@@ -91,7 +91,7 @@ const RE4RJSON = () => {
     if (!connected) return <ErrorPage background="bg-re4" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
 
-    const { PlayerContext, Rank, GameStatsKillCountElement, EnemyHealth, Timer } = data;
+    const { PlayerContext, Rank, GameStatsKillCountElement, Enemies, EnemyHealth, Timer } = data;
     const { SurvivorTypeString, Position, Rotation, Health, CurrentHealthState } = PlayerContext;
     const { CurrentHP, MaxHP, Percentage } = Health
     const { Rank: _Rank, ActionPoint, ItemPoint } = Rank;
@@ -115,7 +115,7 @@ const RE4RJSON = () => {
         return enemy.IsAlive && IgnoreEnemy(enemy);
     }
 
-    const filterdEnemies = EnemyHealth.filter(m => { return (filterConditions(m)) }).sort(function (a, b) {
+    const filterdEnemies = Enemies.filter(m => { return (filterConditions(m.Health)) }).sort(function (a, b) {
         return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
     });
 
@@ -141,8 +141,8 @@ const RE4RJSON = () => {
                         SetShowIGT={SetShowIGT}
                         damagedOnly={damagedOnly}
                         SetDamagedOnly={SetDamagedOnly}
-                        showID={null}
-                        SetShowID={null}
+                        showID={showID}
+                        SetShowID={SetShowID}
                         showLocation={null}
                         SetShowLocation={null}
                         showInventory={null}
@@ -164,7 +164,7 @@ const RE4RJSON = () => {
                 <TextBlocksRowBetween labels={["Rank", "ActionPoint", "ItemPoint"]} vals={[_Rank, ActionPoint, ItemPoint]} colors={["text-white", "text-green-500"]} hideParam={!showRank} />
                 <TextBlock label="Kills" val={Count} colors={["text-white", "text-green-500"]} hideParam={!showKillCount} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar debug={false} id={0} key={`enemy${idx}`} current={enemy.CurrentHP} max={enemy.MaxHP} percent={enemy.Percentage} label="" colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar debug={showID} id={enemy.KindID} key={`enemy${idx}`} current={enemy.Health.CurrentHP} max={enemy.Health.MaxHP} percent={enemy.Health.Percentage} label={enemy.SurvivorTypeString} colors={["bg-red-900", "text-red-500"]} />
                 ))}
             </div>
         </>
