@@ -17,10 +17,10 @@ export const InventorySlot = ({ ...props }) => {
     return (
         <div className={classNames(disableBackground ? "" : "bg-re3rslot1", "relative z-1 w-[76px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
             <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
-            {isEquipped && (
+            {!item.IsEmptySlot && isEquipped && (
                 <div className="absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center bg-re2requipped w-full h-full" />
             )}
-            {!isEquipped && isShortcut && (
+            {!item.IsEmptySlot && !isEquipped && isShortcut && (
                 <div className={classNames(getEquippedSlotNo(foundObject), "absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center w-full h-full bg-no-repeat")} />
             )}
             {item.IsWeapon && (
@@ -29,7 +29,7 @@ export const InventorySlot = ({ ...props }) => {
             {item.IsItem && item.Count > 1 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
             )}
-            {item.Count === -1 && (
+            {item.IsWeapon && item.Count === -1 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">∞</div>
             )}
         </div>
@@ -44,16 +44,16 @@ export const InventorySlot2 = ({ ...props }) => {
     return (
         <div className={classNames(disableBackground ? "" : "bg-re3rslot2", "relative z-1 w-[162px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
             <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
-            {isEquipped && (
+            {!item.IsEmptySlot && isEquipped && (
                 <div className="absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center bg-re2requipped w-full h-full bg-no-repeat" />
             )}
-            {!isEquipped && isShortcut && (
+            {!item.IsEmptySlot && !isEquipped && isShortcut && (
                 <div className={classNames(getEquippedSlotNo(foundObject), "absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center w-full h-full bg-no-repeat")} />
             )}
-            {item.Count > 0 && (
+            {!item.IsEmptySlot && item.Count > 0 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
             )}
-            {item.Count === -1 && (
+            {item.IsWeapon && item.Count === -1 && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">∞</div>
             )}
         </div>
