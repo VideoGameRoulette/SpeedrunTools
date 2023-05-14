@@ -30,7 +30,7 @@ const RE4RJSON = () => {
     const [connected, setConnected] = useState(false);
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
-    // const [bossOnly, SetBossOnly] = useState(false);
+    const [bossOnly, SetBossOnly] = useState(false);
     const [damagedOnly, SetDamagedOnly] = useState(true);
     const [showRank, SetShowRank] = useState(true);
     const [showIGT, SetShowIGT] = useState(true);
@@ -98,25 +98,25 @@ const RE4RJSON = () => {
     const { Count } = GameStatsKillCountElement;
     const { IGTFormattedString } = Timer;
 
-    // const isBoss = [];
-    const notEnemy = [];
+    const isBoss = [200003, 200006, 200007, 200008, 200011, 200013, 200015, 200017, 200018, 200020, 200021, 200023, 200024, 200025, 200026, 200027, 200028, 200029];
+    const notEnemy = [81104, 81105, 81107];
 
-    const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
-    // const IsBossOnly = (enemy) => enemy.IsAlive && isBoss.includes(enemy.EnemyID);
-    const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.EnemyID);
+    const IsDamaged = (enemy) => enemy.Health.IsAlive && enemy.Health.CurrentHP < enemy.Health.MaxHP;
+    const IsBossOnly = (enemy) => enemy.Health.IsAlive && isBoss.includes(enemy.KindID);
+    const IgnoreEnemy = (enemy) => !notEnemy.includes(enemy.KindID);
 
     const filterConditions = (enemy) => {
-        // if (damagedOnly && bossOnly)
-        //     return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
-        // if (bossOnly)
-        //     return IsBossOnly(enemy) && IgnoreEnemy(enemy);
+        if (damagedOnly && bossOnly)
+            return IsBossOnly(enemy) && IsDamaged(enemy) && IgnoreEnemy(enemy);
+        if (bossOnly)
+            return IsBossOnly(enemy) && IgnoreEnemy(enemy);
         if (damagedOnly)
             return IsDamaged(enemy) && IgnoreEnemy(enemy);
-        return enemy.IsAlive && IgnoreEnemy(enemy);
+        return enemy.Health.IsAlive && IgnoreEnemy(enemy);
     }
 
-    const filterdEnemies = Enemies.filter(m => { return (filterConditions(m.Health)) }).sort(function (a, b) {
-        return Asc(a.CurrentHP, b.CurrentHP) || Desc(a.CurrentHP, b.CurrentHP);
+    const filterdEnemies = Enemies.filter(m => { return (filterConditions(m)) }).sort(function (a, b) {
+        return Asc(a.Health.CurrentHP, b.Health.CurrentHP) || Desc(a.Health.CurrentHP, b.Health.CurrentHP);
     });
 
     return (
@@ -133,8 +133,8 @@ const RE4RJSON = () => {
                         x={contextMenuPos.x}
                         y={contextMenuPos.y}
                         onClose={handleCloseContextMenu}
-                        bossOnly={null}
-                        SetBossOnly={null}
+                        bossOnly={bossOnly}
+                        SetBossOnly={SetBossOnly}
                         showRank={showRank}
                         SetShowRank={SetShowRank}
                         showIGT={showIGT}

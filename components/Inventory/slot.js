@@ -38,8 +38,8 @@ export const InventorySlot = ({ ...props }) => {
 
 export const InventorySlot2 = ({ ...props }) => {
     const { item, image, disableBackground, mainSlot, subSlot, shortcuts } = props;
-    const isEquipped = mainSlot.WeaponId == item.WeaponId || subSlot.WeaponId == item.WeaponId;
-    const foundObject = shortcuts.findIndex(obj => obj.WeaponId === item.WeaponId);
+    const isEquipped = item.IsWeapon && mainSlot.WeaponId == item.WeaponId || item.IsWeapon && subSlot.WeaponId == item.WeaponId;
+    const foundObject = item.IsWeapon ? shortcuts.findIndex(obj => obj.WeaponId === item.WeaponId) : -1;
     const isShortcut = foundObject !== -1;
     return (
         <div className={classNames(disableBackground ? "" : "bg-re3rslot2", "relative z-1 w-[162px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>

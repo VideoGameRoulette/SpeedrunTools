@@ -310,6 +310,7 @@ module.exports = {
         "re3rm3shotgun6": "url('/imgs/RE3R/M3Shotgun6.png')",
         "re3rm3shotgun7": "url('/imgs/RE3R/M3Shotgun7.png')",
         "re3rm3shotgun": "url('/imgs/RE3R/M3Shotgun.png')",
+        "re3rinfinitecqbrassaultrifle": "url('/imgs/RE3R/InfiniteCQBRAssaultRifle.png')",
         "re3rcqbrassaultrifle1": "url('/imgs/RE3R/CQBRAssaultRifle1.png')",
         "re3rcqbrassaultrifle2": "url('/imgs/RE3R/CQBRAssaultRifle2.png')",
         "re3rcqbrassaultrifle3": "url('/imgs/RE3R/CQBRAssaultRifle3.png')",

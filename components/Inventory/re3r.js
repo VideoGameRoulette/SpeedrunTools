@@ -161,19 +161,19 @@ export const re3rItemImage = (item, disableBackground, mainSlot, subSlot, shortc
 export const re3rWeaponImage = (item, disableBackground, mainSlot, subSlot, shortcuts) => {
     switch (item.WeaponId) {
         case 1:
-            if (item.Attachments == 1)
+            if (item.WeaponParts == 1)
                 return <InventorySlot2 item={item} image="bg-re3rg19handgun1" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 2)
+            else if (item.WeaponParts == 2)
                 return <InventorySlot item={item} image="bg-re3rg19handgun2" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 3)
+            else if (item.WeaponParts == 3)
                 return <InventorySlot2 item={item} image="bg-re3rg19handgun3" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 4)
+            else if (item.WeaponParts == 4)
                 return <InventorySlot item={item} image="bg-re3rg19handgun4" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 5)
+            else if (item.WeaponParts == 5)
                 return <InventorySlot2 item={item} image="bg-re3rg19handgun5" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 6)
+            else if (item.WeaponParts == 6)
                 return <InventorySlot item={item} image="bg-re3rg19handgun6" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 7)
+            else if (item.WeaponParts == 7)
                 return <InventorySlot2 item={item} image="bg-re3rg19handgun7" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
             else
                 return <InventorySlot item={item} image="bg-re3rg19handgun" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
@@ -185,40 +185,40 @@ export const re3rWeaponImage = (item, disableBackground, mainSlot, subSlot, shor
         case 4:
             return <InventorySlot item={item} image="bg-re3rsamuraiedge" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
         case 7:
-            return <InventorySlot2 item={item} image="bg-re3rinfinitemuphandgun" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
+            return <InventorySlot item={item} image="bg-re3rinfinitemuphandgun" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
 
         case 11:
-            if (item.Attachments == 1)
+            if (item.WeaponParts == 1)
                 return <InventorySlot2 item={item} image="bg-re3rm3shotgun1" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 2)
+            else if (item.WeaponParts == 2)
                 return <InventorySlot item={item} image="bg-re3rm3shotgun2" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 3)
+            else if (item.WeaponParts == 3)
                 return <InventorySlot2 item={item} image="bg-re3rm3shotgun3" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 4)
+            else if (item.WeaponParts == 4)
                 return <InventorySlot item={item} image="bg-re3rm3shotgun4" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 5)
+            else if (item.WeaponParts == 5)
                 return <InventorySlot2 item={item} image="bg-re3rm3shotgun5" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 6)
+            else if (item.WeaponParts == 6)
                 return <InventorySlot item={item} image="bg-re3rm3shotgun6" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 7)
+            else if (item.WeaponParts == 7)
                 return <InventorySlot2 item={item} image="bg-re3rm3shotgun7" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
             else
                 return <InventorySlot item={item} image="bg-re3rm3shotgun" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
 
         case 21:
-            if (item.Attachments == 1)
+            if (item.WeaponParts == 1)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle1" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 2)
+            else if (item.WeaponParts == 2)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle2" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 3)
+            else if (item.WeaponParts == 3)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle3" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 4)
+            else if (item.WeaponParts == 4)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle4" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 5)
+            else if (item.WeaponParts == 5)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle5" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 6)
+            else if (item.WeaponParts == 6)
                 return <InventorySlot2 item={item} image="bg-re3rCQBRAssaultRifle6" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
-            else if (item.Attachments == 7)
+            else if (item.WeaponParts == 7)
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle7" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
             else
                 return <InventorySlot2 item={item} image="bg-re3rcqbrassaultrifle" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
@@ -227,7 +227,7 @@ export const re3rWeaponImage = (item, disableBackground, mainSlot, subSlot, shor
             return <InventorySlot2 item={item} image="bg-re3rinfinitecqbrassaultrifle" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
 
         case 31:
-            if (item.Attachments == 1)
+            if (item.WeaponParts == 1)
                 return <InventorySlot item={item} image="bg-re3rlightninghawk1" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
             else
                 return <InventorySlot item={item} image="bg-re3rlightninghawk" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
