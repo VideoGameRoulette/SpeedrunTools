@@ -42,6 +42,11 @@ const links = [
     name: 'Websocket',
     href: '/widgets/RE4R/ws',
     active: false
+  },
+  {
+    name: 'Inventory',
+    href: '/widgets/RE4R/inventory',
+    active: false
   }
 ];
 
