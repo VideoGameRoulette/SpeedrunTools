@@ -22,9 +22,72 @@ const Desc = (a, b) => {
     return 0;
 };
 
+const Tabs = ({ tabs, setTabs, counts }) => {
+    return (
+        <div>
+            <div className="sm:hidden">
+                <label htmlFor="tabs" className="sr-only">
+                    Select a tab
+                </label>
+                {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
+                <select
+                    id="tabs"
+                    name="tabs"
+                    className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    defaultValue={tabs.find((tab) => tab.current).name}
+                >
+                    {tabs.map((tab) => (
+                        <option key={tab.name}>{tab.name}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="hidden sm:block">
+                <div className="border-b border-gray-200">
+                    <nav className="-mb-px flex space-x-8 p-4" aria-label="Tabs">
+                        {tabs.map((tab, idx) => (
+                            <button
+                                type="button"
+                                key={tab.name}
+                                className={classNames(
+                                    tab.current ? 'bg-indigo-100 text-indigo-700' : 'text-gray-500 hover:text-gray-700',
+                                    'rounded-md px-3 py-2 text-sm font-medium'
+                                )}
+                                aria-current={tab.current ? 'page' : undefined}
+                                onClick={() => setTabs([
+                                    { name: 'Case', current: tab.name === "Case" },
+                                    { name: 'KeyItems', current: tab.name === "KeyItems" },
+                                    { name: 'Treasure', current: tab.name === "Treasure" },
+                                    { name: 'Unique', current: tab.name === "Unique" },
+                                ])}
+                            >
+                                {tab.name}
+                                <span
+                                    className={classNames(
+                                        tab.current ? 'bg-indigo-600 text-indigo-100' : 'bg-gray-100 text-gray-900',
+                                        'ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block'
+                                    )}
+                                >
+                                    {counts[idx]}
+                                </span>
+
+                            </button>
+                        ))}
+                    </nav>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const RE4RItems = () => {
     const [data, setData] = useState(null);
     const [connected, setConnected] = useState(false);
+    const [tabs, setTabs] = useState([
+        { name: 'Case', current: true },
+        { name: 'KeyItems', current: false },
+        { name: 'Treasure', current: false },
+        { name: 'Unique', current: false },
+    ]);
 
     const appendData = d => {
         if (d === null) return;
@@ -56,16 +119,36 @@ const RE4RItems = () => {
     if (!connected) return <></>;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re" callback={handleConnect} />;
 
-    const { Items, InventoryCount, CaseSize } = data;
+    const { Items, KeyItems, TreasureItems, UniqueItems, InventoryCount, KeyItemCount, TreasureItemsCount, UniqueCount, CaseSize } = data;
     const { Rows, Columns } = CaseSize;
 
-    const sortedItems = Items.sort(function (a, b) {
+    const sortedItems = Items?.sort(function (a, b) {
         return Asc(a.Row, b.Row) || Asc(a.Column, b.Column);
     });
 
-    const getRowClass = () => {
-        switch (Rows) {
+    const sortedKeyItems = KeyItems?.sort(function (a, b) {
+        return Asc(a.Row, b.Row) || Asc(a.Column, b.Column);
+    });
+
+    const sortedTreasureItems = TreasureItems?.sort(function (a, b) {
+        return Asc(a.Row, b.Row) || Asc(a.Column, b.Column);
+    });
+
+    const sortedUniqueItems = UniqueItems?.sort(function (a, b) {
+        return Asc(a.Row, b.Row) || Asc(a.Column, b.Column);
+    });
+
+    const getRowClass = (rows) => {
+        switch (rows) {
             default:
+                return "grid-rows-1 h-[64px]";
+            case 2:
+                return "grid-rows-2 h-[128px]";
+            case 3:
+                return "grid-rows-3 h-[192px]";
+            case 4:
+                return "grid-rows-3 h-[256px]";
+            case 7:
                 return "grid-rows-7 h-[448px]";
             case 8:
                 return "grid-rows-8 h-[512px]";
@@ -74,9 +157,15 @@ const RE4RItems = () => {
         }
     }
 
-    const getColumClass = () => {
-        switch (Columns) {
+    const getColumnClass = (columns) => {
+        switch (columns) {
             default:
+                return "grid-cols-8 w-[512px]";
+            case 9:
+                return "grid-cols-9 w-[576px]";
+            case 10:
+                return "grid-cols-10 w-[640px]";
+            case 11:
                 return "grid-cols-11 w-[704px]";
             case 12:
                 return "grid-cols-12 w-[768px]";
@@ -85,19 +174,6 @@ const RE4RItems = () => {
             case 14:
                 return "grid-cols-14 w-[896px]";
         }
-    }
-
-    const drawRows = () => {
-        var r = [];
-        var current = [];
-        for (var i = 0; i < Rows; i++) {
-            for (var j = 0; j < Columns; j++)
-                current[j] = 0;
-            r[i] = current;
-        }
-
-        console.log("slots: ", r);
-        return r;
     }
 
     const getRowStart = (item) => {
@@ -171,64 +247,116 @@ const RE4RItems = () => {
             default:
                 return "";
             case 112800000:
-                return "bg-re4rhandgunammo";
+                return "bg-re4rhandgunammo bg-no-repeat";
             case 112803200:
-                return "bg-re4rshotgunammo";
+                return "bg-re4rshotgunammo bg-no-repeat";
             case 112806400:
-                return "bg-re4rsubmachinegunammo";
+                return "bg-re4rsubmachinegunammo bg-no-repeat";
             case 112804800:
-                return "bg-re4rrifleammo";
+                return "bg-re4rrifleammo bg-no-repeat";
             case 114400000:
-                return "bg-re4rgreenherb";
+                return "bg-re4rgreenherb bg-no-repeat";
             case 114401600:
-                return "bg-re4rredherb";
+                return "bg-re4rredherb bg-no-repeat";
             case 114403200:
-                return "bg-re4ryellowherb";
+                return "bg-re4ryellowherb bg-no-repeat";
             case 114404800:
-                return "bg-re4rmixedherbsgg"
+                return "bg-re4rmixedherbsgg bg-no-repeat";
             case 114408000:
-                return "bg-re4rmixedherbsgr";
+                return "bg-re4rmixedherbsgr bg-no-repeat";
+            case 114406400:
+                return "bg-re4rmixedherbsggg bg-no-repeat";
+            case 114411200:
+                return "bg-re4rmixedherbsry bg-no-repeat";
+            case 114409600:
+                return "bg-re4rmixedherbsgy bg-no-repeat";
             case 114412800:
-                return "bg-re4rmixedherbsgry";
+                return "bg-re4rmixedherbsgry bg-no-repeat";
             case 276438656:
-                return "bg-re4rkitchenknife";
+                return "bg-re4rkitchenknife bg-no-repeat";
             case 117606400:
-                return "bg-re4rresourcess";
+                return "bg-re4rresourcess bg-no-repeat";
             case 117601600:
-                return "bg-re4rresourcesl";
+                return "bg-re4rresourcesl bg-no-repeat";
             case 117600000:
-                return "bg-re4rgunpowder";
+                return "bg-re4rgunpowder bg-no-repeat";
             case 277080256:
-                return "bg-re4rchickenegg";
+                return "bg-re4rchickenegg bg-no-repeat";
             case 277081856:
-                return "bg-re4rbrownchickenegg";
+                return "bg-re4rbrownchickenegg bg-no-repeat";
             case 276275456:
-                return "bg-re4rrocketlauncher";
+                return "bg-re4rrocketlauncher bg-no-repeat";
             case 274835456:
-                return "bg-re4rsg09r";
+                return "bg-re4rsg09r bg-no-repeat";
             case 275155456:
-                return "bg-re4rtmp";
+                return "bg-re4rtmp bg-no-repeat";
             case 278035456:
-                return "bg-re4rsentinelnine";
+                return "bg-re4rsentinelnine bg-no-repeat";
             case 275795456:
-                return "bg-re4rboltthrower";
+                return "bg-re4rboltthrower bg-no-repeat";
             case 278037056:
-                return "bg-re4rskullshaker";
+                return "bg-re4rskullshaker bg-no-repeat";
             case 274995456:
-                return "bg-re4rw870";
+                return "bg-re4rw870 bg-no-repeat";
             case 276435456:
-                return "bg-re4rcombatknife";
+                return "bg-re4rcombatknife bg-no-repeat";
             case 277078656:
-                return "bg-re4rflashgrenade";
+                return "bg-re4rflashgrenade bg-no-repeat";
             case 277075456:
-                return "bg-re4rhandgrenade";
+                return "bg-re4rhandgrenade bg-no-repeat";
             case 274838656:
-                return "bg-re4rred9";
-
+                return "bg-re4rred9 bg-no-repeat";
+            case 117603200:
+                return "bg-re4rattachablemines bg-no-repeat";
+            case 274997056:
+                return "bg-re4rriotgun bg-no-repeat";
+            case 112808000:
+                return "bg-re4rbolts bg-no-repeat";
+            case 274840256:
+                return "bg-re4rblacktail bg-no-repeat";
+            case 275635456:
+                return "bg-re4rbrokenbutterfly bg-no-repeat";
+            case 275477056:
+                return "bg-re4rstingray bg-no-repeat";
+            case 276440256:
+                return "bg-re4rbootknife bg-no-repeat";
+            case 112801600:
+                return "bg-re4rmagnumammo bg-no-repeat";
+            case 116000000:
+                return "bg-re4rscope bg-no-repeat";
+            case 275475456:
+                return "bg-re4rsrm1903 bg-no-repeat";
+            case 277077056:
+                return "bg-re4rheavygrenade bg-no-repeat";
+            case 275478656:
+                return "bg-re4rcqbrassaultrifle bg-no-repeat";
+            case 274998656:
+                return "bg-re4rstriker bg-no-repeat";
+            case 114416000:
+                return "bg-re4rfirstaidspray bg-no-repeat";
+            case 114417600:
+                return "bg-re4rblackbass bg-no-repeat";
+            case 119276800:
+                return "bg-re4rcubicdevice bg-no-repeat";
+            case 119286400:
+                return "bg-re4rsilvertoken bg-no-repeat";
+            case 119288000:
+                return "bg-re4rgoldtoken bg-no-repeat";
+            case 119281600:
+                return "bg-re4rhunterslodgekey bg-no-repeat";
+            case 119204800:
+                return "bg-re4rinsigniakey bg-no-repeat";
+            case 119254400:
+                return "bg-re4rdungeonkey bg-no-repeat";
+            case 119251200:
+                return "bg-re4rhexagonpiecec bg-no-repeat";
+            case 119256000:
+                return "bg-re4roldwayshrinekey bg-no-repeat";
         }
     }
 
     const getItemBase = (item) => {
+        if (item.ItemId === 0) return;
         switch (item.ItemSize) {
             case 0: return <div className={classNames(getItemImage(item), getRowStart(item), getColumnStart(item), "row-span-1 col-span-1 bg-black border")} />
             case 1: return <div className={classNames(getItemImage(item), getRowStart(item), getColumnStart(item), item.IsRotated ? "row-span-2 col-span-1" : "row-span-1 col-span-2", "bg-black border")} />
@@ -261,26 +389,64 @@ const RE4RItems = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+            <Tabs tabs={tabs} setTabs={setTabs} counts={[InventoryCount, KeyItemCount, TreasureItemsCount, UniqueCount]} />
             <div className="absolute w-full h-full flex p-4 gap-2">
-                <div className="w-auto h-full">
-                    <div className={classNames(getRowClass(), getColumClass(), "grid bg-re4rslots")}>
-                        {/* {drawRows().map(row => (
-                        row.map(r => (
-                            <div className="bg-zinc-600 border"></div>
-                            ))
-                        ))} */}
-                        {Items.map(item => (
-                            getItemBase(item)
-                        ))}
-                    </div>
-                </div>
-                <div className="w-full h-full flex flex-col">
-                    <div className="text-white">Item Count: {InventoryCount}</div>
-                    {sortedItems.map(item => (
-                        <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
-                    ))}
-                </div>
-
+                {tabs[0].current && (
+                    <>
+                        <div className="w-auto h-full">
+                            <div className={classNames(getRowClass(Rows), getColumnClass(Columns), "grid bg-re4rslots")}>
+                                {Items != null && Items.map(item => (
+                                    getItemBase(item)
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-full h-full flex flex-col">
+                            {sortedItems?.map(item => (
+                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                            ))}
+                        </div>
+                    </>
+                )}
+                {tabs[1].current && (
+                    <>
+                        <div className="w-auto h-full">
+                            <div className={classNames(getRowClass(1), getColumnClass(8), "grid bg-re4rslots")}>
+                                {KeyItems != null && KeyItems.map(item => (
+                                    getItemBase(item)
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-full h-full flex flex-col">
+                            {sortedKeyItems?.map(item => (
+                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                            ))}
+                        </div>
+                    </>
+                )}
+                {tabs[2].current && (
+                    <>
+                        <div className="w-auto h-full">
+                            <div className={classNames(getRowClass(3), getColumnClass(8), "grid bg-re4rslots")} />
+                        </div>
+                        <div className="w-full h-full flex flex-col">
+                            {sortedTreasureItems?.map(item => (
+                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                            ))}
+                        </div>
+                    </>
+                )}
+                {tabs[3].current && (
+                    <>
+                        <div className="w-auto h-full">
+                            <div className={classNames(getRowClass(4), getColumnClass(8), "grid bg-re4rslots")} />
+                        </div>
+                        <div className="w-full h-full flex flex-col">
+                            {sortedUniqueItems?.map(item => (
+                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </>
     );

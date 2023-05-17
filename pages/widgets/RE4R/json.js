@@ -91,7 +91,7 @@ const RE4RJSON = () => {
     if (!connected) return <ErrorPage background="bg-re4" connected={connected} callback={handleConnect} />;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
 
-    const { PlayerContext, Rank, GameStatsKillCountElement, Enemies, EnemyHealth, Timer } = data;
+    const { PlayerContext, PartnerContext, Rank, GameStatsKillCountElement, Enemies, Timer } = data;
     const { SurvivorTypeString, Position, Rotation, Health, CurrentHealthState } = PlayerContext;
     const { CurrentHP, MaxHP, Percentage } = Health
     const { Rank: _Rank, ActionPoint, ItemPoint } = Rank;
@@ -159,12 +159,19 @@ const RE4RJSON = () => {
                 )}
                 <TextBlock label="IGT" val={IGTFormattedString} colors={["text-white", "text-green-500"]} hideParam={!showIGT} />
                 <HealthBar current={CurrentHP} max={MaxHP} percent={Percentage} label={SurvivorTypeString} colors={GetColor(CurrentHealthState)} />
+                {PartnerContext.length > 0 && (
+                    PartnerContext.map(partner => (
+                        partner != null && (
+                            <HealthBar key={partner.SurvivorTypeString} current={partner.Health.CurrentHP} max={partner.Health.MaxHP} percent={partner.Health.Percentage} label={partner.SurvivorTypeString.replace(/_/g, "")} colors={GetColor(partner.CurrentHealthState)} />
+                        )
+                    ))
+                )}
                 <TextBlocksRowBetween labels={["X", "Y", "Z"]} vals={[Position.X.toFixed(3), Position.Y.toFixed(3), Position.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showPosition} />
                 <TextBlocksRowBetween labels={["RW", "RX", "RY", "RZ"]} vals={[Rotation.W.toFixed(3), Rotation.X.toFixed(3), Rotation.Y.toFixed(3), Rotation.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showRotation} />
                 <TextBlocksRowBetween labels={["Rank", "ActionPoint", "ItemPoint"]} vals={[_Rank, ActionPoint, ItemPoint]} colors={["text-white", "text-green-500"]} hideParam={!showRank} />
                 <TextBlock label="Kills" val={Count} colors={["text-white", "text-green-500"]} hideParam={!showKillCount} />
                 {filterdEnemies.map((enemy, idx) => (
-                    <HealthBar debug={showID} id={enemy.KindID} key={`enemy${idx}`} current={enemy.Health.CurrentHP} max={enemy.Health.MaxHP} percent={enemy.Health.Percentage} label={enemy.SurvivorTypeString} colors={["bg-red-900", "text-red-500"]} />
+                    <HealthBar debug={showID} id={enemy.KindID} key={`enemy${idx}`} current={enemy.Health.CurrentHP} max={enemy.Health.MaxHP} percent={enemy.Health.Percentage} label={enemy.SurvivorTypeString.replace(/_/g, " ")} colors={["bg-red-900", "text-red-500"]} />
                 ))}
             </div>
         </>
