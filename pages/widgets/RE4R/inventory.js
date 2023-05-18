@@ -22,7 +22,7 @@ const Desc = (a, b) => {
     return 0;
 };
 
-const Tabs = ({ tabs, setTabs, counts }) => {
+const Tabs = ({ tabs, setTabs, counts, LastItem, LastItemName }) => {
     return (
         <div>
             <div className="sm:hidden">
@@ -43,7 +43,7 @@ const Tabs = ({ tabs, setTabs, counts }) => {
             </div>
             <div className="hidden sm:block">
                 <div className="border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-8 p-4" aria-label="Tabs">
+                    <nav className="-mb-px flex items-center space-x-8 p-4" aria-label="Tabs">
                         {tabs.map((tab, idx) => (
                             <button
                                 type="button"
@@ -72,6 +72,7 @@ const Tabs = ({ tabs, setTabs, counts }) => {
 
                             </button>
                         ))}
+                        <div className="text-white font-bold">Last Item: {LastItem} : {LastItemName}</div>
                     </nav>
                 </div>
             </div>
@@ -119,8 +120,24 @@ const RE4RItems = () => {
     if (!connected) return <></>;
     if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re" callback={handleConnect} />;
 
-    const { Items, KeyItems, TreasureItems, UniqueItems, InventoryCount, KeyItemCount, TreasureItemsCount, UniqueCount, CaseSize } = data;
-    const { Rows, Columns } = CaseSize;
+    const {
+        LastItem,
+        LastItemName,
+        Items,
+        KeyItems,
+        TreasureItems,
+        UniqueItems,
+        InventoryCount,
+        KeyItemCount,
+        TreasureItemsCount,
+        UniqueCount,
+        CaseSize
+    } = data;
+
+    const {
+        Rows,
+        Columns
+    } = CaseSize;
 
     const sortedItems = Items?.sort(function (a, b) {
         return Asc(a.Row, b.Row) || Asc(a.Column, b.Column);
@@ -270,6 +287,8 @@ const RE4RItems = () => {
                 return "bg-re4rmixedherbsry bg-no-repeat";
             case 114409600:
                 return "bg-re4rmixedherbsgy bg-no-repeat";
+            case 114414400:
+                return "bg-re4rmixedherbsggy bg-no-repeat";
             case 114412800:
                 return "bg-re4rmixedherbsgry bg-no-repeat";
             case 276438656:
@@ -352,6 +371,28 @@ const RE4RItems = () => {
                 return "bg-re4rhexagonpiecec bg-no-repeat";
             case 119256000:
                 return "bg-re4roldwayshrinekey bg-no-repeat";
+            case 119238400:
+                return "bg-re4rluiskey bg-no-repeat";
+            case 119244800:
+                return "bg-re4rsmallkey bg-no-repeat";
+            case 119211200:
+                return "bg-re4rlevel1keycard bg-no-repeat";
+            case 119212800:
+                return "bg-re4rlevel2keycard bg-no-repeat";
+            case 119214400:
+                return "bg-re4rlevel3keycard bg-no-repeat";
+            case 275637056:
+                return "bg-re4rkiller7 bg-no-repeat";
+            case 275158656:
+                return "bg-re4rle5 bg-no-repeat";
+            case 116004800:
+                return "bg-re4rbiosensorcope bg-no-repeat";
+            case 119219200:
+                return "bg-re4rwrench bg-no-repeat";
+            case 276437056:
+                return "bg-re4rfightingknife bg-no-repeat";
+            case 114422400:
+                return "bg-re4rviper bg-no-repeat";
         }
     }
 
@@ -389,7 +430,7 @@ const RE4RItems = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <Tabs tabs={tabs} setTabs={setTabs} counts={[InventoryCount, KeyItemCount, TreasureItemsCount, UniqueCount]} />
+            <Tabs tabs={tabs} setTabs={setTabs} counts={[InventoryCount, KeyItemCount, TreasureItemsCount, UniqueCount]} LastItem={LastItem} LastItemName={LastItemName} />
             <div className="absolute w-full h-full flex p-4 gap-2">
                 {tabs[0].current && (
                     <>
@@ -400,9 +441,9 @@ const RE4RItems = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-full flex flex-col px-4">
                             {sortedItems?.map(item => (
-                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                                <div key={item.ItemId} className="text-white text-xs">{item._DebuggerDisplay}</div>
                             ))}
                         </div>
                     </>
@@ -410,15 +451,15 @@ const RE4RItems = () => {
                 {tabs[1].current && (
                     <>
                         <div className="w-auto h-full">
-                            <div className={classNames(getRowClass(1), getColumnClass(8), "grid bg-re4rslots")}>
+                            <div className={classNames(getRowClass(1), getColumnClass(KeyItemCount), "grid bg-re4rslots")}>
                                 {KeyItems != null && KeyItems.map(item => (
                                     getItemBase(item)
                                 ))}
                             </div>
                         </div>
-                        <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-full flex flex-col px-4">
                             {sortedKeyItems?.map(item => (
-                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                                <div key={item.ItemId} className="text-white text-xs">{item._DebuggerDisplay}</div>
                             ))}
                         </div>
                     </>
@@ -426,11 +467,11 @@ const RE4RItems = () => {
                 {tabs[2].current && (
                     <>
                         <div className="w-auto h-full">
-                            <div className={classNames(getRowClass(3), getColumnClass(8), "grid bg-re4rslots")} />
+                            <div className={classNames(getRowClass(3), getColumnClass(11), "grid bg-re4rslots")} />
                         </div>
-                        <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-full flex flex-col px-4">
                             {sortedTreasureItems?.map(item => (
-                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                                <div key={item.ItemId} className="text-white text-xs">{item._DebuggerDisplay}</div>
                             ))}
                         </div>
                     </>
@@ -440,9 +481,9 @@ const RE4RItems = () => {
                         <div className="w-auto h-full">
                             <div className={classNames(getRowClass(4), getColumnClass(8), "grid bg-re4rslots")} />
                         </div>
-                        <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-full flex flex-col px-4">
                             {sortedUniqueItems?.map(item => (
-                                <div key={item.ItemId} className="text-white">{item._DebuggerDisplay}</div>
+                                <div key={item.ItemId} className="text-white text-xs">{item._DebuggerDisplay}</div>
                             ))}
                         </div>
                     </>
