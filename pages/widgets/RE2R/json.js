@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Head from 'next/head';
 import { ErrorPage, GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
@@ -28,7 +28,6 @@ const isDebug = process.env.NODE_ENV != "production";
 
 const RE2RJSON = () => {
     const [data, setData] = useState(null);
-    const [connected, setConnected] = useState(false);
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
     const [showDebug, SetShowDebug] = useState(false);
@@ -40,6 +39,61 @@ const RE2RJSON = () => {
     const [showLocation, SetShowLocation] = useState(false);
     const [showInventory, SetShowInventory] = useState(false);
     const [showPosition, SetShowPosition] = useState(false);
+    const [isLoaded, SetIsLoaded] = useState(0);
+
+    const initSettings = () => {
+        const loadedSettings = loadUserSettings("RE2R");
+        // console.log("Loaded Settings: ", loadedSettings);
+        if (loadedSettings) {
+            SetShowDebug(loadedSettings.showDebug)
+            SetBossOnly(loadedSettings.bossOnly);
+            SetDamagedOnly(loadedSettings.damagedOnly);
+            SetShowRank(loadedSettings.showRank);
+            SetShowIGT(loadedSettings.showIGT);
+            SetShowID(loadedSettings.showID);
+            SetShowLocation(loadedSettings.showLocation);
+            SetShowInventory(loadedSettings.showInventory);
+            SetShowPosition(loadedSettings.showPosition);
+            SetIsLoaded(true);
+            return;
+        }
+        // if local storage is null create new instance
+        const newSettings = {
+            showDebug,
+            bossOnly,
+            damagedOnly,
+            showRank,
+            showIGT,
+            showID,
+            showLocation,
+            showInventory,
+            showPosition,
+        }
+        saveUserSettings("RE2R", newSettings);
+        SetIsLoaded(true);
+    };
+
+    useEffect(() => {
+        if (localStorage !== undefined && !isLoaded) {
+            initSettings();
+            handleConnect();
+        }
+    });
+
+    useEffect(() => {
+        if (!isLoaded) return;
+        const newSettings = {
+            bossOnly,
+            damagedOnly,
+            showRank,
+            showIGT,
+            showID,
+            showPosition,
+            showRotation,
+            showKillCount,
+        }
+        saveUserSettings("RE2R", newSettings);
+    }, [isLoaded, showDebug, bossOnly, damagedOnly, showRank, showIGT, showID, showPosition, showLocation, showInventory]);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
@@ -57,28 +111,21 @@ const RE2RJSON = () => {
         // if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
     };
 
-    const handleConnect = useCallback(() => {
+    const handleConnect = () => {
         const getData = () => {
             fetch(JSON_ENDPOINT)
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    setConnected(true);
                     appendData(data);
                 })
                 .catch(function (err) {
                     console.log("Error: " + err);
-                    setConnected(false);
                 });
         };
-        if (!connected) getData();
-        if (connected) setInterval(getData, POLLING_RATE);
-    }, [connected]);
-
-    useEffect(() => {
-        handleConnect();
-    }, [handleConnect]);
+        setInterval(getData, POLLING_RATE);
+    };
 
     const GetColor = (state) => {
         if (state === "Gassed") return ["bg-rose-900", "text-rose-300"];
@@ -89,8 +136,8 @@ const RE2RJSON = () => {
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage background="bg-re2" connected={connected} callback={handleConnect} />;
-    if (data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
+    if (data === null) return <></>;
+    if (data !== null && data.GameName !== "RE2R") return <GameErrorPage background="bg-re2" callback={handleConnect} />;
 
     const { Timer, RankManager, PlayerManager, Items, Enemies, InventoryCount, LocationID, LocationName, MapID, MapName, MainSlot, SubSlot, Shortcuts } = data;
     const { IsLoaded, CurrentSurvivor, CurrentSurvivorString, Health, CurrentHealthState, Position } = PlayerManager;

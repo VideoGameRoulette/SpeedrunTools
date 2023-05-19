@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Head from 'next/head';
 import { GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
