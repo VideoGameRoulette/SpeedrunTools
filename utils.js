@@ -1,3 +1,12 @@
+export function saveUserSettings(gameName, settings) {
+    localStorage.setItem(gameName, JSON.stringify(settings));
+}
+
+export function loadUserSettings(gameName) {
+    const storedSettings = localStorage.getItem(gameName);
+    return storedSettings ? JSON.parse(storedSettings) : null;
+}
+
 export function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import Head from 'next/head';
-import { ErrorPage, GameErrorPage } from "components/Errors";
+import { GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocksRowBetween } from "components/TextBlock";
 import ContextMenu from "components/ContextMenu";
+import { saveUserSettings, loadUserSettings } from 'utils';
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -23,11 +24,8 @@ const Desc = (a, b) => {
     return 0;
 };
 
-// const isDebug = process.env.NODE_ENV != "production";
-
 const RE4RJSON = () => {
     const [data, setData] = useState(null);
-    const [connected, setConnected] = useState(false);
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
     const [bossOnly, SetBossOnly] = useState(false);
@@ -40,6 +38,59 @@ const RE4RJSON = () => {
     const [showPosition, SetShowPosition] = useState(false);
     const [showRotation, SetShowRotation] = useState(false);
     const [showKillCount, SetKillCount] = useState(false);
+    const [isLoaded, SetIsLoaded] = useState(0);
+
+    const initSettings = () => {
+        const loadedSettings = loadUserSettings("RE4R");
+        // console.log("Loaded Settings: ", loadedSettings);
+        if (loadedSettings) {
+            SetBossOnly(loadedSettings.bossOnly);
+            SetDamagedOnly(loadedSettings.damagedOnly);
+            SetShowRank(loadedSettings.showRank);
+            SetShowIGT(loadedSettings.showIGT);
+            SetShowID(loadedSettings.showID);
+            SetShowPosition(loadedSettings.showPosition);
+            SetShowRotation(loadedSettings.showRotation);
+            SetKillCount(loadedSettings.showKillCount);
+            SetIsLoaded(true);
+            return;
+        }
+        // if local storage is null create new instance
+        const newSettings = {
+            bossOnly,
+            damagedOnly,
+            showRank,
+            showIGT,
+            showID,
+            showPosition,
+            showRotation,
+            showKillCount,
+        }
+        saveUserSettings("RE4R", newSettings);
+        SetIsLoaded(true);
+    };
+
+    useEffect(() => {
+        if (localStorage !== undefined && !isLoaded) {
+            initSettings();
+            handleConnect();
+        }
+    });
+
+    useEffect(() => {
+        if (!isLoaded) return;
+        const newSettings = {
+            bossOnly,
+            damagedOnly,
+            showRank,
+            showIGT,
+            showID,
+            showPosition,
+            showRotation,
+            showKillCount,
+        }
+        saveUserSettings("RE4R", newSettings);
+    }, [isLoaded, bossOnly, damagedOnly, showRank, showIGT, showID, showPosition, showRotation, showKillCount]);
 
     const handleContextMenu = (event) => {
         event.preventDefault();
@@ -57,39 +108,31 @@ const RE4RJSON = () => {
         // if (process.env.NODE_ENV !== 'production') console.log("JSON Data: ", d);
     };
 
-    const handleConnect = useCallback(() => {
+    const handleConnect = () => {
         const getData = () => {
             fetch(JSON_ENDPOINT)
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    setConnected(true);
                     appendData(data);
                 })
                 .catch(function (err) {
                     console.log("Error: " + err);
-                    setConnected(false);
                 });
         };
-        if (!connected) getData();
-        if (connected) setInterval(getData, POLLING_RATE);
-    }, [connected]);
-
-    useEffect(() => {
-        handleConnect();
-    }, [handleConnect]);
+        setInterval(getData, POLLING_RATE);
+    };
 
     function GetColor(state) {
-        console.log(state);
         if (state === "Fine") return ["bg-green-800", "text-green-300"];
         if (state === "FineToo") return ["bg-green-900", "text-green-300"];
         if (state === "Caution") return ["bg-yellow-800", "text-yellow-300"];
         return ["bg-red-900", "text-red-300"];
     }
 
-    if (!connected) return <ErrorPage background="bg-re4" connected={connected} callback={handleConnect} />;
-    if (data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
+    if (data === null) return <></>;
+    if (data !== null && data.GameName !== "RE4R") return <GameErrorPage background="bg-re4" callback={handleConnect} />;
 
     const { PlayerContext, PartnerContext, Rank, GameStatsKillCountElement, Enemies, Timer } = data;
     const { SurvivorTypeString, Position, Rotation, Health, CurrentHealthState } = PlayerContext;
@@ -167,7 +210,7 @@ const RE4RJSON = () => {
                     ))
                 )}
                 <TextBlocksRowBetween labels={["X", "Y", "Z"]} vals={[Position.X.toFixed(3), Position.Y.toFixed(3), Position.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showPosition} />
-                <TextBlocksRowBetween labels={["RW", "RX", "RY", "RZ"]} vals={[Rotation.W.toFixed(3), Rotation.X.toFixed(3), Rotation.Y.toFixed(3), Rotation.Z.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showRotation} />
+                <TextBlocksRowBetween labels={["RX", "RY"]} vals={[Rotation.W.toFixed(3), Rotation.Y.toFixed(3)]} colors={["text-white", "text-green-500"]} hideParam={!showRotation} />
                 <TextBlocksRowBetween labels={["Rank", "ActionPoint", "ItemPoint"]} vals={[_Rank, ActionPoint, ItemPoint]} colors={["text-white", "text-green-500"]} hideParam={!showRank} />
                 <TextBlock label="Kills" val={Count} colors={["text-white", "text-green-500"]} hideParam={!showKillCount} />
                 {filterdEnemies.map((enemy, idx) => (
