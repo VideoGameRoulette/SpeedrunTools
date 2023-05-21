@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import Head from 'next/head';
-import { ErrorPage, GameErrorPage } from "components/Errors";
+import { GameErrorPage } from "components/Errors";
 import HealthBar from "components/HealthBar";
 import { TextBlock, TextBlocksRowBetween } from "components/TextBlock";
 import ContextMenu from "components/ContextMenu";
 import { RE2RInventory } from "components/Inventory";
+import { saveUserSettings, loadUserSettings } from 'utils';
 
 //LOCAL JSON SERVER SETTINGS
 var JSON_ADDRESS = "127.0.0.1";
@@ -83,14 +84,15 @@ const RE2RJSON = () => {
     useEffect(() => {
         if (!isLoaded) return;
         const newSettings = {
+            showDebug,
             bossOnly,
             damagedOnly,
             showRank,
             showIGT,
             showID,
+            showLocation,
+            showInventory,
             showPosition,
-            showRotation,
-            showKillCount,
         }
         saveUserSettings("RE2R", newSettings);
     }, [isLoaded, showDebug, bossOnly, damagedOnly, showRank, showIGT, showID, showPosition, showLocation, showInventory]);
