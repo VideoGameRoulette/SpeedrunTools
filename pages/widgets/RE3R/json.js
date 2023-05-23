@@ -91,7 +91,6 @@ const RE3RJSON = () => {
             showIGT,
             showID,
             showPosition,
-            showKillCount,
             showLocation,
             showInventory,
         }
