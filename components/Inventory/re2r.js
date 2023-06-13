@@ -393,7 +393,7 @@ export const re2rWeaponImage = (item, disableBackground, mainSlot, subSlot, shor
         case 47:
             return <InventorySlot item={item} image="bg-re2rcombatknifeinfinite" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
         case 49:
-            return <InventorySlot item={item} image="bg-re2rantitankrocketlauncher" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
+            return <InventorySlot2 item={item} image="bg-re2rantitankrocketlauncher" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
         case 50:
             return <InventorySlot2 item={item} image="bg-re2rminigun" disableBackground={disableBackground} mainSlot={mainSlot} subSlot={subSlot} shortcuts={shortcuts} />;
         case 65:
