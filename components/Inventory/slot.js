@@ -9,19 +9,22 @@ const getEquippedSlotNo = (idx) => {
     }
 }
 
-export const InventorySlot = ({ ...props }) => {
-    const { item, image, disableBackground, mainSlot, subSlot, shortcuts } = props;
-    const isEquipped = item.WeaponId != -1 && mainSlot.WeaponId == item.WeaponId || item.WeaponId != -1 && subSlot.WeaponId == item.WeaponId;
-    const foundObject = shortcuts.findIndex(obj => item.WeaponId != -1 && obj.WeaponId === item.WeaponId);
-    const isShortcut = foundObject !== -1;
+export const InventorySlot = ({ item, image, disableBackground, mainSlot, subSlot, shortcuts, subShortcuts }) => {
+    const isEquipped = item.WeaponId != -1 &&
+        (
+            (mainSlot.WeaponId == item.WeaponId) ||
+            (subSlot.WeaponId == item.WeaponId && subShortcuts.find(obj => obj.WeaponId == item.WeaponId)?.SlotNo == item.SlotNo)
+        );
+    const foundMain = shortcuts.findIndex(obj => item.WeaponId != -1 && obj.WeaponId === item.WeaponId);
+    const isMainShortcut = foundMain !== -1;
     return (
         <div className={classNames(disableBackground ? "" : "bg-re3rslot1", "relative z-1 w-[76px] h-[76px] flex-shrink-0 m-[5px] mr-0")}>
             <div className={classNames(image, "w-full h-full bg-contain bg-center bg-no-repeat")} />
             {!item.IsEmptySlot && isEquipped && (
                 <div className="absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center bg-re2requipped w-full h-full" />
             )}
-            {!item.IsEmptySlot && !isEquipped && isShortcut && (
-                <div className={classNames(getEquippedSlotNo(foundObject), "absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center w-full h-full bg-no-repeat")} />
+            {!item.IsEmptySlot && !isEquipped && isMainShortcut && (
+                <div className={classNames(getEquippedSlotNo(foundMain), "absolute top-0 left-0 px-2 py-0 text-gray-200 flex justify-center items-center w-full h-full bg-no-repeat")} />
             )}
             {item.IsWeapon && (
                 <div className="absolute bottom-0 right-0 px-2 py-0 text-gray-200 flex justify-center items-center">{item.Count}</div>
