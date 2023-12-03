@@ -146,7 +146,7 @@ const RE2RJSON = () => {
     const { GameRank, RankPoint } = RankManager;
     const { MeasureDemoSpendingTime, MeasurePauseSpendingTime } = Timer;
 
-    const isBoss = [10, 11, 12, 13, 15, 16];
+    const isBoss = [10, 11, 12, 13, 15, 16, 17];
     const notEnemy = [18];
 
     const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
@@ -182,10 +182,12 @@ const RE2RJSON = () => {
         if (id === 8) return "G-Adult";
         if (id === 10) return "Mr. X";
         if (id === 11) return "Tyrant";
-        if (id === 12) return "G";
+        if (id === 12) return "G1";
         if (id === 13) return "G2";
+        // what is id 14?
         if (id === 15) return "G3";
         if (id === 16) return "G4";
+        if (id === 17) return "G5";
         if (id === 18) return "Chief Irons";
         return "??";
     }
