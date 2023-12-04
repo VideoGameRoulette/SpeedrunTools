@@ -189,6 +189,9 @@ const RE2RJSON = () => {
         if (id === 16) return "G4";
         if (id === 17) return "G5";
         if (id === 18) return "Chief Irons";
+        // ids 19-22?
+        if (id === 23) return "Pale Head";
+        if (id === 24) return "Psn Zombie";
         return "??";
     }
 
