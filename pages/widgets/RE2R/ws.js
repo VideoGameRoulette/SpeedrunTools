@@ -96,7 +96,7 @@ const RE2RWS = () => {
     const { GameRank, RankPoint } = RankManager;
     const { MeasureDemoSpendingTime, MeasurePauseSpendingTime } = Timer;
 
-    const isBoss = [10, 11, 12, 13, 15, 16];
+    const isBoss = [10, 11, 12, 13, 15, 16, 17];
     const notEnemy = [18];
 
     const IsDamaged = (enemy) => enemy.IsAlive && enemy.CurrentHP < enemy.MaxHP;
